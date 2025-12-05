@@ -657,10 +657,14 @@
                 this.totalCorrect = 0;
                 this.audioContext = null;
                 this.currentSpeech = null;
+                this.wordInterval = null;
                 this.musicNodes = [];
                 this.currentQuestions = []; // Seçilen sorular
                 this.questionPools = this.generateQuestionPools(); // Soru havuzları
-                
+                this.isMobileViewport = window.matchMedia('(max-width: 480px)').matches;
+                this.starCount = this.isMobileViewport ? 50 : 100;
+                this.particleBaseCount = this.isMobileViewport ? 8 : 15;
+
                 this.initStars();
                 this.initMusicControl();
                 this.initAudio();
@@ -816,7 +820,7 @@
 
             initStars() {
                 const starsContainer = document.getElementById('stars');
-                for (let i = 0; i < 100; i++) {
+                for (let i = 0; i < this.starCount; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
                     star.style.left = Math.random() * 100 + '%';
@@ -824,6 +828,9 @@
                     star.style.width = Math.random() * 3 + 1 + 'px';
                     star.style.height = star.style.width;
                     star.style.animationDelay = Math.random() * 3 + 's';
+                    star.style.animationDuration = this.isMobileViewport
+                        ? 5 + Math.random() * 2 + 's'
+                        : 3 + Math.random() * 1.5 + 's';
                     starsContainer.appendChild(star);
                 }
             }
@@ -1171,14 +1178,18 @@
                     screen.classList.remove('active');
                 });
                 document.getElementById(screenId).classList.add('active');
+
+                const shouldPauseAmbient = screenId === 'welcomeScreen' || screenId === 'levelSelectScreen';
+                document.body.classList.toggle('ambient-paused', shouldPauseAmbient);
             }
 
             showWelcome() {
                 // Temayı temizle
                 document.body.className = '';
+                this.stopActiveLoops();
                 this.clearParticles();
                 this.resetStars();
-                
+
                 this.showScreen('welcomeScreen');
             }
 
@@ -1194,11 +1205,29 @@
             showLevelSelect() {
                 // Temayı temizle
                 document.body.className = '';
+                this.stopActiveLoops();
                 this.clearParticles();
                 this.resetStars();
-                
+
                 this.showScreen('levelSelectScreen');
                 this.renderLevelSelect();
+            }
+
+            stopActiveLoops() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+
+                if (this.wordInterval) {
+                    clearInterval(this.wordInterval);
+                    this.wordInterval = null;
+                }
+
+                if (this.currentSpeech) {
+                    window.speechSynthesis.cancel();
+                    this.currentSpeech = null;
+                }
             }
 
             renderLevelSelect() {
@@ -1306,13 +1335,16 @@
             }
 
             createLevelParticles(levelNum) {
-                const particleCount = 15;
+                const particleCount = this.isMobileViewport ? Math.ceil(this.particleBaseCount * 0.75) : this.particleBaseCount;
                 for (let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
                     particle.className = `particle level-${levelNum}`;
                     particle.style.left = Math.random() * 100 + '%';
                     particle.style.top = Math.random() * 100 + '%';
                     particle.style.animationDelay = Math.random() * 3 + 's';
+                    if (this.isMobileViewport) {
+                        particle.style.animationDuration = '6s';
+                    }
                     document.body.appendChild(particle);
                 }
             }
@@ -1412,6 +1444,11 @@
                     window.speechSynthesis.cancel();
                 }
 
+                if (this.wordInterval) {
+                    clearInterval(this.wordInterval);
+                    this.wordInterval = null;
+                }
+
                 // Kelime bazlı senkronizasyon için metni hazırla
                 const words = text.split(' ');
                 const storyTextElement = document.getElementById('storyText');
@@ -1466,7 +1503,7 @@
                     const msPerWord = 1000 / wordsPerSecond;
 
                     // Kelime bazlı animasyon
-                    const wordInterval = setInterval(() => {
+                    this.wordInterval = setInterval(() => {
                         if (currentWordIndex < words.length) {
                             // Mevcut kelimeyi ekle
                             const wordSpan = document.createElement('span');
@@ -1512,7 +1549,8 @@
                             // Scroll otomatik
                             storyTextElement.scrollTop = storyTextElement.scrollHeight;
                         } else {
-                            clearInterval(wordInterval);
+                            clearInterval(this.wordInterval);
+                            this.wordInterval = null;
                         }
                     }, msPerWord);
 
@@ -1623,12 +1661,7 @@
             }
 
             levelFailed() {
-                clearInterval(this.timer);
-                
-                // Seslendirmeyi durdur
-                if (this.currentSpeech) {
-                    window.speechSynthesis.cancel();
-                }
+                this.stopActiveLoops();
 
                 // Modal oluştur
                 const modal = document.createElement('div');
@@ -1755,8 +1788,12 @@
             }
 
             startTimer() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+
                 this.updateTimerDisplay();
-                
+
                 this.timer = setInterval(() => {
                     this.timeRemaining--;
                     this.updateTimerDisplay();
