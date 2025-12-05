@@ -1532,26 +1532,26 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: clamp(12px, 4vw, 24px);
+            padding: clamp(12px, 4vw, 28px);
             animation: fadeIn 0.35s ease;
         }
 
         .failure-modal-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.72);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(10px);
             animation: fadeIn 0.35s ease;
         }
 
         .failure-modal-content {
             position: relative;
-            background: linear-gradient(135deg, rgba(139, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.95) 100%);
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.96) 0%, rgba(0, 0, 0, 0.94) 100%);
             border: 4px solid #ff0033;
-            border-radius: 30px;
+            border-radius: 28px;
             width: min(90vw, 600px);
             max-width: 600px;
-            max-height: min(90vh, 720px);
+            max-height: min(90vh, 660px);
             box-shadow:
                 0 0 60px rgba(255, 0, 51, 0.8),
                 0 0 120px rgba(255, 0, 51, 0.4),
@@ -1583,42 +1583,45 @@
             position: relative;
             z-index: 1;
             text-align: center;
-            padding: clamp(24px, 5vw, 40px);
+            padding: clamp(24px, 5vw, 44px);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: clamp(16px, 3vw, 28px);
+            max-height: calc(min(90vh, 660px) - clamp(48px, 9vw, 88px));
         }
 
         .failure-emoji {
-            font-size: clamp(4.5rem, 14vw, 8rem);
-            margin-bottom: clamp(12px, 3vw, 24px);
+            font-size: clamp(4rem, 13vw, 7.5rem);
+            margin-bottom: clamp(12px, 3vw, 22px);
             animation: explosionShake 0.5s ease, float 3s ease-in-out infinite;
             filter: drop-shadow(0 0 30px rgba(255, 0, 51, 0.8));
         }
 
         .failure-title {
             font-family: 'Russo One', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-size: clamp(2.1rem, 6vw, 3.25rem);
             color: #ff0033;
             text-shadow:
                 0 0 20px #ff0033,
                 0 0 40px #ff0033,
                 0 0 60px #ff0033,
                 0 0 80px #ff0033;
-            margin-bottom: 20px;
+            margin-bottom: clamp(12px, 2vw, 18px);
             font-weight: 900;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             animation: titlePulse 1.5s ease-in-out infinite;
+            word-break: break-word;
         }
 
         .failure-level-info {
             font-family: 'Exo 2', sans-serif;
-            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            font-size: clamp(1.15rem, 3.6vw, 1.6rem);
             color: #ffaa00;
-            margin-bottom: 30px;
+            margin-bottom: clamp(12px, 3vw, 22px);
             font-weight: 700;
-            text-shadow: 0 0 20px #ffaa00;
+            text-shadow: 0 0 16px #ffaa00;
+            line-height: 1.4;
         }
 
         .failure-info-box {
@@ -1662,7 +1665,7 @@
 
         .failure-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: clamp(12px, 2.5vw, 20px);
             margin-top: clamp(10px, 2vw, 18px);
         }
@@ -1722,11 +1725,11 @@
         }
 
         .failure-hint-text {
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-size: clamp(0.95rem, 2.4vw, 1.15rem);
             color: #ffff00;
             font-weight: 600;
             text-shadow: 0 0 15px #ffff00;
-            line-height: 1.8;
+            line-height: 1.7;
         }
 
         .failure-actions {

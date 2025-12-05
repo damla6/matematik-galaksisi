@@ -1639,12 +1639,12 @@
 
                 modal.innerHTML = `
                     <div class="failure-modal-overlay"></div>
-                    <div class="failure-modal-content">
+                    <div class="failure-modal-content" role="dialog" aria-modal="true" aria-labelledby="failureTitle" aria-describedby="failureDescription">
                         <div class="failure-modal-bg"></div>
                         <div class="failure-modal-body">
                             <div class="failure-emoji">💥</div>
-                            <h2 class="failure-title">⚠️ SEVİYE BAŞARISIZ ⚠️</h2>
-                            <div class="failure-level-info">📍 Seviye ${level.id}: ${level.title}</div>
+                            <h2 class="failure-title" id="failureTitle">⚠️ SEVİYE BAŞARISIZ ⚠️</h2>
+                            <div class="failure-level-info" id="failureDescription">📍 Seviye ${level.id}: ${level.title}</div>
 
                             <div class="failure-info-box">
                                 <div class="failure-info-title">Sebep:</div>
