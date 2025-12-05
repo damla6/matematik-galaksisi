@@ -838,6 +838,12 @@
             gap: 28px;
         }
 
+        .story-question-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
         .game-header {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
@@ -1887,7 +1893,21 @@
             }
 
             .question-card, .story-card {
-                padding: 20px;
+                padding: 32px 24px;
+                max-height: clamp(280px, 52vh, 480px);
+            }
+
+            .story-text {
+                line-height: 2.1;
+                padding: 12px 24px 60px 24px;
+            }
+
+            .question-card {
+                gap: 16px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
             }
 
             .story-card {
