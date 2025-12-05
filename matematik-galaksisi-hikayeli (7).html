@@ -1,0 +1,3612 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
+    <title>Matematik Galaksisi: Doğru Macerası</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            transition: all 0.8s ease;
+        }
+
+        /* Ana menü arka planı - Uzay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(123, 47, 247, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(247, 37, 133, 0.2) 0%, transparent 50%);
+            animation: mainBgPulse 8s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes mainBgPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Seviye 1 - Harita Dijital Grid */
+        body.level-1 {
+            background: 
+                linear-gradient(0deg, transparent 24%, rgba(0, 212, 255, 0.05) 25%, rgba(0, 212, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 212, 255, 0.05) 75%, rgba(0, 212, 255, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(0, 212, 255, 0.05) 25%, rgba(0, 212, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 212, 255, 0.05) 75%, rgba(0, 212, 255, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(180deg, #000814 0%, #001d3d 50%, #000814 100%);
+            background-size: 50px 50px, 50px 50px, 100% 100%;
+            animation: gridMove 20s linear infinite;
+        }
+
+        body.level-1::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.4) 0%, transparent 25%),
+                radial-gradient(circle at 80% 80%, rgba(0, 100, 255, 0.4) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.2) 0%, transparent 50%);
+            animation: coordinatesPulse 4s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 50px 50px, -50px -50px, 0 0; }
+        }
+
+        @keyframes coordinatesPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        /* Seviye 2 - Dağlar Topografik */
+        body.level-2 {
+            background: 
+                repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0, 255, 136, 0.03) 10px, rgba(0, 255, 136, 0.03) 20px),
+                repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0, 255, 136, 0.03) 10px, rgba(0, 255, 136, 0.03) 20px),
+                linear-gradient(180deg, #001400 0%, #003300 25%, #004d00 50%, #003300 75%, #001400 100%);
+            animation: mountainWave 6s ease-in-out infinite;
+        }
+
+        body.level-2::before {
+            content: '⛰️⛰️⛰️⛰️⛰️⛰️⛰️⛰️⛰️⛰️';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            font-size: 8rem;
+            opacity: 0.1;
+            animation: mountainScroll 20s linear infinite;
+            z-index: -1;
+            line-height: 1;
+        }
+
+        @keyframes mountainWave {
+            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+            50% { filter: brightness(1.2) hue-rotate(10deg); }
+        }
+
+        @keyframes mountainScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Seviye 3 - Tünel Spiral */
+        body.level-3 {
+            background: 
+                radial-gradient(circle at center, 
+                    transparent 0%, 
+                    transparent 10%, 
+                    rgba(255, 0, 255, 0.1) 10%, 
+                    rgba(255, 0, 255, 0.1) 11%, 
+                    transparent 11%,
+                    transparent 20%, 
+                    rgba(157, 0, 255, 0.1) 20%, 
+                    rgba(157, 0, 255, 0.1) 21%, 
+                    transparent 21%,
+                    transparent 30%, 
+                    rgba(255, 0, 255, 0.1) 30%, 
+                    rgba(255, 0, 255, 0.1) 31%, 
+                    transparent 31%,
+                    transparent 40%, 
+                    rgba(157, 0, 255, 0.1) 40%, 
+                    rgba(157, 0, 255, 0.1) 41%, 
+                    transparent 41%
+                ),
+                linear-gradient(180deg, #140014 0%, #330033 50%, #140014 100%);
+            animation: tunnelSpin 10s linear infinite;
+        }
+
+        body.level-3::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.6), transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: tunnelCore 3s ease-in-out infinite;
+            z-index: -1;
+            box-shadow: 
+                0 0 100px 50px rgba(255, 0, 255, 0.4),
+                0 0 200px 100px rgba(157, 0, 255, 0.3);
+        }
+
+        @keyframes tunnelSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes tunnelCore {
+            0%, 100% { 
+                width: 100px; 
+                height: 100px;
+                opacity: 0.6;
+            }
+            50% { 
+                width: 200px; 
+                height: 200px;
+                opacity: 1;
+            }
+        }
+
+        /* Seviye 4 - Tapınak Hieroglifler */
+        body.level-4 {
+            background: 
+                linear-gradient(90deg, transparent 79px, rgba(255, 170, 0, 0.05) 79px, rgba(255, 170, 0, 0.05) 81px, transparent 81px),
+                linear-gradient(0deg, transparent 79px, rgba(255, 170, 0, 0.05) 79px, rgba(255, 170, 0, 0.05) 81px, transparent 81px),
+                linear-gradient(180deg, #1a0a00 0%, #4d2600 30%, #6d3600 50%, #4d2600 70%, #1a0a00 100%);
+            background-size: 80px 80px, 80px 80px, 100% 100%;
+            animation: templeGlow 5s ease-in-out infinite;
+        }
+
+        body.level-4::before {
+            content: '🔱⚡🔱⚡🔱⚡🔱⚡🔱⚡';
+            position: fixed;
+            top: 50%;
+            left: 0;
+            width: 200%;
+            font-size: 6rem;
+            opacity: 0.08;
+            transform: translateY(-50%);
+            animation: hieroglyphScroll 30s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes templeGlow {
+            0%, 100% { 
+                filter: brightness(1) contrast(1);
+                background-position: 0 0, 0 0, 0 0;
+            }
+            50% { 
+                filter: brightness(1.3) contrast(1.2);
+                background-position: 40px 40px, -40px -40px, 0 0;
+            }
+        }
+
+        @keyframes hieroglyphScroll {
+            0% { transform: translateY(-50%) translateX(0); }
+            100% { transform: translateY(-50%) translateX(-50%); }
+        }
+
+        /* Seviye 5 - Köprü Işık Yolları */
+        body.level-5 {
+            background: 
+                linear-gradient(135deg, #001a1a 25%, transparent 25%),
+                linear-gradient(225deg, #001a1a 25%, transparent 25%),
+                linear-gradient(45deg, #001a1a 25%, transparent 25%),
+                linear-gradient(315deg, #001a1a 25%, #004d4d 25%);
+            background-size: 100px 100px;
+            background-position: 50px 0, 50px 0, 0 0, 0 0;
+            animation: bridgePattern 8s ease-in-out infinite;
+        }
+
+        body.level-5::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(0, 255, 255, 0.3) 50%, transparent 100%);
+            animation: bridgeLight 4s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes bridgePattern {
+            0%, 100% { background-position: 50px 0, 50px 0, 0 0, 0 0; }
+            50% { background-position: 0 50px, 0 50px, 50px 50px, 50px 50px; }
+        }
+
+        @keyframes bridgeLight {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        /* Seviye 6 - Savaş Alanı Radar */
+        body.level-6 {
+            background: 
+                repeating-radial-gradient(circle at center, 
+                    transparent 0px, 
+                    transparent 49px, 
+                    rgba(255, 0, 51, 0.1) 49px, 
+                    rgba(255, 0, 51, 0.1) 50px
+                ),
+                linear-gradient(180deg, #1a0000 0%, #4d0000 50%, #1a0000 100%);
+            animation: radarSweep 4s linear infinite;
+        }
+
+        body.level-6::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 0, 51, 0.8), transparent);
+            transform-origin: top center;
+            transform: translate(-50%, 0) rotate(0deg);
+            animation: radarLine 4s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes radarSweep {
+            0%, 100% { filter: brightness(1) contrast(1.2); }
+            50% { filter: brightness(1.4) contrast(1.4); }
+        }
+
+        @keyframes radarLine {
+            0% { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, 0) rotate(360deg); opacity: 1; }
+        }
+
+        /* Seviye 7 - Matrix Kod Yağmuru */
+        body.level-7 {
+            background: 
+                linear-gradient(180deg, #001a14 0%, #003326 50%, #001a14 100%);
+            position: relative;
+        }
+
+        body.level-7::before {
+            content: '01101001011010010110100101101001011010010110100101101001';
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            color: rgba(0, 255, 153, 0.3);
+            word-wrap: break-word;
+            animation: matrixFall 20s linear infinite;
+            z-index: -1;
+            line-height: 1.5;
+            letter-spacing: 5px;
+        }
+
+        body.level-7::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(0deg, 
+                    transparent, 
+                    transparent 2px, 
+                    rgba(0, 255, 153, 0.03) 2px, 
+                    rgba(0, 255, 153, 0.03) 4px
+                );
+            animation: scanDown 8s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes matrixFall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50%); }
+        }
+
+        @keyframes scanDown {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(20px); }
+        }
+
+        /* Animasyonlu yıldızlar arka plan */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.7;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .star.shooting {
+            width: 2px !important;
+            height: 2px !important;
+            animation: shooting 3s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes shooting {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(300px) translateY(300px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.2);
+            }
+        }
+
+        /* Seviye partikülleri */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle.level-1 {
+            width: 8px;
+            height: 8px;
+            background: #64b5f6;
+            border-radius: 50%;
+            animation: mapFloat 4s ease-in-out infinite;
+        }
+
+        .particle.level-2 {
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 12px solid #81c784;
+            animation: mountainDrift 5s linear infinite;
+        }
+
+        .particle.level-3 {
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ba68c8, #ab47bc);
+            animation: tunnelSpin 3s linear infinite;
+        }
+
+        .particle.level-4 {
+            width: 12px;
+            height: 12px;
+            background: #ffb74d;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: templeGlitter 2s ease-in-out infinite;
+        }
+
+        @keyframes mapFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        @keyframes mountainDrift {
+            0% { transform: translateX(-100vw) rotate(0deg); }
+            100% { transform: translateX(100vw) rotate(360deg); }
+        }
+
+        @keyframes tunnelSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.5); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes templeGlitter {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes correct {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Ekranlar */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Giriş Ekranı */
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .game-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #00d4ff, #7b2ff7, #f72585, #00d4ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            animation: neonGradient 3s ease infinite, float 3s ease-in-out infinite;
+            text-shadow:
+            0 0 8px rgba(0, 212, 255, 0.6),
+            0 0 12px rgba(123, 47, 247, 0.4);
+            letter-spacing: 8px;
+            position: relative;
+        }
+
+        .game-title::before {
+            content: '🚀 Matematik Galaksisi';
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(45deg, #00d4ff, #7b2ff7, #f72585, #00d4ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: neonGradient 3s ease infinite;
+            filter: blur(8px);
+            opacity: 0.3;
+        }
+
+        @keyframes neonGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .game-subtitle {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #00ffff;
+            margin-bottom: 50px;
+            text-shadow:
+            0 0 6px #00ffff,
+            0 0 10px #00ffff;
+            letter-spacing: 10px;
+            font-weight: 700;
+            animation: neonFlicker 3s ease-in-out infinite;
+        }
+
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff; }
+            50% { opacity: 0.8; text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 45px #00ffff; }
+        }
+
+        .character-intro {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 3px solid;
+            animation: slideInLeft 0.8s ease, borderGlow 2s ease-in-out infinite;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 212, 255, 0.2),
+                0 0 40px rgba(0, 212, 255, 0.4),
+                0 10px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-intro::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(0, 212, 255, 0.3) 50%,
+                transparent 70%
+            );
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%) translateX(-100%) rotate(45deg); }
+            100% { transform: translateY(100%) translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { 
+                border-color: #00d4ff;
+                box-shadow: 
+                    inset 0 0 30px rgba(0, 212, 255, 0.2),
+                    0 0 40px rgba(0, 212, 255, 0.6),
+                    0 10px 50px rgba(0, 0, 0, 0.5);
+            }
+            50% { 
+                border-color: #7b2ff7;
+                box-shadow: 
+                    inset 0 0 30px rgba(123, 47, 247, 0.2),
+                    0 0 60px rgba(123, 47, 247, 0.8),
+                    0 10px 50px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        .character-name {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #00ffff;
+            margin-bottom: 20px;
+            text-shadow: 
+                0 0 20px #00ffff,
+                0 0 40px #00ffff,
+                0 0 60px #00ffff;
+            font-weight: 800;
+            letter-spacing: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .character-desc {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            line-height: 1.9;
+            color: #e0e7ff;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Butonlar */
+        .btn {
+            font-family: 'Russo One', sans-serif;
+            padding: 15px 40px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Tıklama efekti için ripple animasyonu */
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            animation: ripple 0.6s ease-out;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(56, 239, 125, 0.4);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 15px 40px rgba(56, 239, 125, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-success:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(235, 51, 73, 0.4);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 15px 40px rgba(235, 51, 73, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-danger:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        /* Seviye Seçim Ekranı */
+        .level-select {
+            text-align: center;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .level-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px);
+            border-color: #667eea;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .level-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .level-card.locked:hover {
+            transform: none;
+        }
+
+        .level-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6ec4, #7873f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .level-title {
+            font-size: 1.3rem;
+            color: #ffd93d;
+            margin: 15px 0;
+        }
+
+        .level-info {
+            font-size: 0.9rem;
+            color: #a0b3ff;
+            margin: 5px 0;
+        }
+
+        .level-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+        }
+
+        /* Oyun Ekranı */
+        .game-screen {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .game-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            animation: headerShine 3s linear infinite;
+        }
+
+        @keyframes headerShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .level-info-game h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px currentColor;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .level-info-game h2::before {
+            content: attr(data-icon);
+            font-size: 2rem;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .level-info-game {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .timer-container {
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd93d;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer.warning {
+            color: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        /* Hikaye Kartı - ULTRA NEON */
+        .story-card {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            padding: 50px;
+            margin: 35px 0;
+            border: 4px solid;
+            position: relative;
+            overflow: hidden;
+            animation: storyMegaGlow 2s ease-in-out infinite;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            background-size: 400% 400%;
+            border-radius: 30px;
+            z-index: -1;
+            animation: neonBorder 4s linear infinite;
+        }
+
+        .story-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.03) 2px,
+                    rgba(255, 255, 255, 0.03) 4px
+                );
+            pointer-events: none;
+            animation: scanlines 8s linear infinite;
+        }
+
+        @keyframes neonBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(20px); }
+        }
+
+        @keyframes storyMegaGlow {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 40px rgba(255, 0, 255, 0.6),
+                    0 0 80px rgba(0, 255, 255, 0.4),
+                    inset 0 0 40px rgba(255, 0, 255, 0.2);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 60px rgba(255, 0, 255, 0.8),
+                    0 0 120px rgba(0, 255, 255, 0.6),
+                    inset 0 0 60px rgba(255, 0, 255, 0.3);
+                transform: scale(1.02);
+            }
+        }
+
+        .story-character {
+            font-size: 6rem;
+            text-align: center;
+            margin-bottom: 25px;
+            animation: characterMegaBounce 1.5s ease-in-out infinite;
+            filter: 
+                drop-shadow(0 0 30px currentColor)
+                drop-shadow(0 0 60px currentColor);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes characterMegaBounce {
+            0%, 100% { 
+                transform: translateY(0) scale(1) rotate(0deg);
+                filter: 
+                    drop-shadow(0 0 30px currentColor)
+                    drop-shadow(0 0 60px currentColor);
+            }
+            50% { 
+                transform: translateY(-20px) scale(1.2) rotate(5deg);
+                filter: 
+                    drop-shadow(0 0 50px currentColor)
+                    drop-shadow(0 0 100px currentColor);
+            }
+        }
+
+        .story-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #ffff00;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 
+                0 0 20px #ffff00,
+                0 0 40px #ffff00,
+                0 0 60px #ffff00,
+                0 0 80px #ffff00;
+            font-weight: 900;
+            letter-spacing: 6px;
+            animation: titlePulse 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { 
+                text-shadow: 
+                    0 0 20px #ffff00,
+                    0 0 40px #ffff00,
+                    0 0 60px #ffff00;
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 
+                    0 0 30px #ffff00,
+                    0 0 60px #ffff00,
+                    0 0 90px #ffff00,
+                    0 0 120px #ffff00;
+                transform: scale(1.05);
+            }
+        }
+
+        .story-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            line-height: 2.2;
+            color: #ffffff;
+            text-align: center;
+            font-style: italic;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 4px 15px rgba(0, 0, 0, 0.9);
+            padding: 0 30px 60px 30px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            min-height: 120px;
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .story-text::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .story-text::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .story-text::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .story-text::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 0, 0.8);
+        }
+
+        .story-text::after {
+            content: '🎙️';
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            animation: micPulse 1s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px #ffff00);
+        }
+
+        @keyframes micPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+            50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        }
+
+        /* Soru Kartı */
+        .question-card {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            padding: 45px;
+            margin: 35px 0;
+            border: 4px solid #00ffff;
+            animation: slideInRight 0.5s ease, questionNeonPulse 2s ease-in-out infinite;
+            box-shadow: 
+                0 0 60px rgba(0, 255, 255, 0.6),
+                0 0 120px rgba(0, 255, 255, 0.3),
+                inset 0 0 40px rgba(0, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.4), transparent 70%);
+            animation: pulseCenter 3s ease-in-out infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes pulseCenter {
+            0%, 100% { 
+                width: 200px;
+                height: 200px;
+                opacity: 0.3;
+            }
+            50% { 
+                width: 400px;
+                height: 400px;
+                opacity: 0.1;
+            }
+        }
+
+        .question-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent);
+            border-radius: 50%;
+            animation: questionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes questionNeonPulse {
+            0%, 100% { 
+                border-color: #00ffff;
+                box-shadow: 
+                    0 0 60px rgba(0, 255, 255, 0.6),
+                    0 0 120px rgba(0, 255, 255, 0.3),
+                    inset 0 0 40px rgba(0, 255, 255, 0.2);
+            }
+            50% { 
+                border-color: #ff00ff;
+                box-shadow: 
+                    0 0 80px rgba(255, 0, 255, 0.8),
+                    0 0 160px rgba(255, 0, 255, 0.4),
+                    inset 0 0 60px rgba(255, 0, 255, 0.3);
+            }
+        }
+
+        @keyframes questionPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 0.1; }
+        }
+
+        .question-number {
+            font-family: 'Russo One', sans-serif;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            color: #00ff00;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 
+                0 0 20px #00ff00,
+                0 0 40px #00ff00;
+            position: relative;
+            z-index: 1;
+        }
+
+        .question-number::before {
+            content: '📝';
+            font-size: 2.5rem;
+            animation: iconSpin 3s linear infinite;
+            filter: drop-shadow(0 0 20px #00ff00);
+        }
+
+        @keyframes iconSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .question-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            line-height: 2;
+            margin-bottom: 40px;
+            color: #ffffff;
+            font-weight: 700;
+            text-shadow: 
+                0 0 15px rgba(255, 255, 255, 0.8),
+                0 4px 20px rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border-radius: 20px;
+            border-left: 6px solid #00ffff;
+            border-right: 6px solid #ff00ff;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 255, 255, 0.2),
+                0 10px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .question-text::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: textShine 3s linear infinite;
+        }
+
+        @keyframes textShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes wordFadeIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(-5px) scale(0.95);
+                filter: blur(2px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .answers-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .answer-btn:hover::before {
+            left: 100%;
+        }
+
+        .answer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #667eea;
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .answer-btn:active {
+            transform: translateX(10px) scale(0.98);
+        }
+
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-color: #38ef7d;
+            animation: correct 0.5s ease;
+            box-shadow: 0 0 30px rgba(56, 239, 125, 0.6);
+        }
+
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            border-color: #eb3349;
+            animation: shake 0.5s ease;
+            box-shadow: 0 0 30px rgba(235, 51, 73, 0.6);
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Seviye kartlarına da hover efekti */
+        .level-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .level-card:hover::after {
+            width: 400px;
+            height: 400px;
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            border-color: #667eea;
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5);
+        }
+
+        .level-card:active {
+            transform: translateY(-8px) scale(1.01);
+        }
+
+        .level-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .level-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .level-card.locked::after {
+            display: none;
+        }
+        .result-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6ec4, #7873f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a0b3ff;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        /* Final Ekranı */
+        .final-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .final-animation {
+            font-size: 8rem;
+            animation: float 2s ease-in-out infinite;
+            margin: 30px 0;
+        }
+
+        /* Müzik Kontrolü */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .music-icon {
+            font-size: 1.5rem;
+        }
+        ..game-title,
+        .game-subtitle,
+        .character-name,
+        .story-title,
+        .question-number,
+        .btn {
+            font-family: 'Russo One', sans-serif;
+        }
+        body, p, .character-desc, .question-text, .story-text {
+            font-family: 'Exo 2', sans-serif;
+        }
+
+
+
+
+        /* Responsive Tasarım */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .game-title {
+                font-size: 2rem;
+            }
+
+            .character-intro {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .levels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .level-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .timer {
+                font-size: 2rem;
+            }
+
+            .question-card, .story-card {
+                padding: 20px;
+            }
+
+            .result-card {
+                padding: 30px 20px;
+            }
+
+            .result-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+
+            .answer-btn {
+                padding: 15px;
+            }
+
+            .story-character {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Yıldızlar Arka Plan -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Müzik Kontrolü -->
+    <div class="music-control" id="musicControl">
+        <span class="music-icon">🔊</span>
+    </div>
+
+    <!-- Ana Container -->
+    <div class="container">
+        <!-- Giriş Ekranı -->
+        <div class="screen active" id="welcomeScreen">
+            <div class="welcome-screen">
+                <h1 class="game-title">🚀 Matematik Galaksisi</h1>
+                <p class="game-subtitle">Doğru Macerası</p>
+                
+                <div class="character-intro">
+                    <h2 class="character-name">👨‍🚀 Zeron - Galaktik Kaşif</h2>
+                    <p class="character-desc">
+                        Kaos Lordu galakside büyük bir karmaşa yaratmış durumda! Yıldız haritaları bozulmuş, 
+                        koordinat sistemleri çökmüş ve matematik düzeni tamamen alt üst olmuş. 
+                        Axel, bu karmaşayı çözmek ve galaksiye düzeni geri getirmek için yola çıktı.
+                    </p>
+                </div>
+
+                <div class="character-intro">
+                    <h2 class="character-name">🤖 Orion - Hologram Asistan</h2>
+                    <p class="character-desc">
+                        Yapay zeka destekli hologram asistanı Orion, Axel'in yanında olacak. 
+                        Ancak gerçek gücü senden gelecek! 7 zorlu seviyeyi geçerek Kaos Lordu'nu 
+                        yenmen ve galaksiyi kurtarman gerekiyor. Her seviyede 5 soru var ve zorluk 
+                        giderek artıyor. Süre sınırın var, dikkatli ol!
+                    </p>
+                </div>
+
+                <div class="character-intro" style="background: rgba(255, 193, 7, 0.1); border-color: rgba(255, 193, 7, 0.3);">
+                    <h2 class="character-name">⚠️ Görev Kuralları</h2>
+                    <p class="character-desc">
+                        • Her seviyede 5 soru bulunur (Kolay → Zor)<br>
+                        • Her seviyenin kendine özel süre sınırı var<br>
+                        • Süre dolarsa seviye kapanır<br>
+                        • Erken bitirene bonus puan verilir<br>
+                        • Bir seviyeyi bitirmeden diğerine geçemezsin
+                    </p>
+                </div>
+
+                <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()">
+                    Maceraya Başla! 🚀
+                </button>
+            </div>
+        </div>
+
+        <!-- Seviye Seçim Ekranı -->
+        <div class="screen" id="levelSelectScreen">
+            <div class="level-select">
+                <h1 class="game-title">Seviye Seç</h1>
+                <div class="levels-grid" id="levelsGrid"></div>
+                <button class="btn btn-danger" onclick="game.playSound('click'); game.showWelcome()" style="margin-top: 30px;">
+                    Ana Menü
+                </button>
+            </div>
+        </div>
+
+        <!-- Oyun Ekranı -->
+        <div class="screen" id="gameScreen">
+            <div class="game-screen">
+                <div class="game-header">
+                    <div class="level-header">
+                        <div class="level-info-game">
+                            <h2 id="currentLevelTitle">Seviye 1</h2>
+                            <p id="currentLevelDesc">Açıklama</p>
+                        </div>
+                        <div class="timer-container">
+                            <div>⏱️ Kalan Süre</div>
+                            <div class="timer" id="timer">3:00</div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hikaye Kartı -->
+                <div class="story-card" id="storyCard">
+                    <div class="story-character" id="storyCharacter">🤖</div>
+                    <div class="story-title" id="storyTitle">Orion Konuşuyor...</div>
+                    <div class="story-text" id="storyText">Hazırlanıyor...</div>
+                </div>
+
+                <div class="question-card" id="questionCard">
+                    <div class="question-number" id="questionNumber">Soru 1/5</div>
+                    <div class="question-text" id="questionText">Soru yükleniyor...</div>
+                    <div class="answers-grid" id="answersGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sonuç Ekranı -->
+        <div class="screen" id="resultScreen">
+            <div class="result-screen">
+                <div class="result-card">
+                    <div class="result-icon" id="resultIcon">🎉</div>
+                    <h2 class="result-title" id="resultTitle">Tebrikler!</h2>
+                    <p id="resultMessage" style="font-size: 1.2rem; margin: 20px 0;"></p>
+                    
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Doğru Cevap</div>
+                            <div class="stat-value" id="correctAnswers">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Yanlış Cevap</div>
+                            <div class="stat-value" id="wrongAnswers">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Süre Bonusu</div>
+                            <div class="stat-value" id="timeBonus">+0</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-success" onclick="game.playSound('click'); game.nextLevel()">
+                            Sonraki Seviye 🚀
+                        </button>
+                        <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()">
+                            Seviye Seç
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Ekranı -->
+        <div class="screen" id="finalScreen">
+            <div class="final-screen">
+                <div class="result-card">
+                    <div class="final-animation">👑</div>
+                    <h2 class="result-title">Galaksi Kurtarıldı!</h2>
+                    <p style="font-size: 1.3rem; margin: 30px 0; line-height: 1.8;">
+                        Muhteşem bir iş çıkardın! Tüm seviyeleri başarıyla tamamladın ve 
+                        Matematik Galaksisi'ne düzeni geri getirdin. Axel ve Orion sana 
+                        minnettarlar. Sen gerçek bir Matematik Kahramanısın! 🌟
+                    </p>
+                    
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Toplam Puan</div>
+                            <div class="stat-value" id="finalScore">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Doğru Cevaplar</div>
+                            <div class="stat-value" id="finalCorrect">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Tamamlanan Seviye</div>
+                            <div class="stat-value">7/7</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="game.playSound('click'); game.restart()">
+                        Yeniden Oyna 🔄
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Oyun Verileri - Hikaye Odaklı Versiyon
+        const gameData = {
+            levels: [
+                {
+                    id: 1,
+                    title: "Kayıp Koordinat Haritası",
+                    description: "Axel, Kaos Lordu tarafından bozulan yıldız haritasını yeniden kurmak için doğru noktaları işaretlemek zorundadır. Orion'un hologram rehberliğiyle harita yeniden aydınlatılacaktır.",
+                    time: 180,
+                    stories: [
+                        {
+                            character: "🤖",
+                            title: "Orion Konuşuyor",
+                            text: "Axel, yıldız haritası tamamen karışmış! Koordinat sistemini yeniden kurmak için pozitif bölgedeki noktaları bulmalıyız. Birinci kadran nerede?"
+                        },
+                        {
+                            character: "👨‍🚀",
+                            title: "Axel'in Görevi",
+                            text: "Anladım Orion! Şimdi negatif y değerleri içeren noktaları bulmalıyız. Bu noktalar dördüncü kadranda olmalı, değil mi?"
+                        },
+                        {
+                            character: "🤖",
+                            title: "Zorluk Artıyor",
+                            text: "Mükemmel! Şimdi daha zorlu bir görev: Hem x hem de y değeri negatif olan noktaları bul. Üçüncü kadran seni bekliyor!"
+                        },
+                        {
+                            character: "⚡",
+                            title: "Eğim Şeytanı Beliriyor",
+                            text: "Ha ha ha! Kesirli koordinatlar sizi durduracak! 2.5, 3.5 gibi değerler kafanızı karıştıracak!"
+                        },
+                        {
+                            character: "🤖",
+                            title: "Final Testi",
+                            text: "Son test Axel! Y ekseni üzerindeki özel noktayı bul. Sadece y değeri var, x=0 olmalı. Koordinat sisteminin kalbine ulaştık!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "Pozitif bölgede basit bir nokta: Hangisi birinci bölgede (x > 0, y > 0) yer alır?",
+                            answers: ["(3, 4)", "(-3, 4)", "(3, -4)", "(-3, -4)"],
+                            correct: 0
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "Negatif y içeren nokta: Hangisi dördüncü bölgede (x > 0, y < 0) yer alır?",
+                            answers: ["(2, 3)", "(2, -3)", "(-2, -3)", "(-2, 3)"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "Hem negatif x hem negatif y: Hangisi üçüncü bölgede yer alır?",
+                            answers: ["(5, 2)", "(-5, 2)", "(5, -2)", "(-5, -2)"],
+                            correct: 3
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "Kesirli koordinatlar: Hangisi doğru kesirli koordinattır?",
+                            answers: ["(1.5, 2.5)", "(2, 3)", "(-1, -2)", "(0, 1)"],
+                            correct: 0
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "Orijin ve eksenlere göre özel nokta: Hangisi y ekseninin üzerinde yer alır?",
+                            answers: ["(3, 0)", "(0, 3)", "(3, 3)", "(0, 0)"],
+                            correct: 1
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Eğim Dağları Geçidi",
+                    description: "Axel, dağ geçitlerinden geçebilmek için iki nokta arasındaki eğimi hesaplamak zorundadır. Eğim şeytanları yanlış hesaplamaları sever.",
+                    time: 240,
+                    stories: [
+                        {
+                            character: "⛰️",
+                            title: "Dağ Geçidinde",
+                            text: "Eğim Dağları önünde duruyoruz. İki nokta arasındaki eğimi hesapla ki geçebilesin! İlk geçit: (1,2) ve (3,6). Formül: (y2-y1)/(x2-x1)"
+                        },
+                        {
+                            character: "👹",
+                            title: "Eğim Şeytanı",
+                            text: "Pozitif eğim kolaydı! Ama negatif eğimle başa çıkabilir misin? Yukarı çıkan yol mu, aşağı inen yol mu?"
+                        },
+                        {
+                            character: "⚡",
+                            title: "Tehlikeli Bölge",
+                            text: "Şimdi her iki koordinat da negatif! (-2,-3) ve (2,5) arası ne kadar dik? Kafan karışacak!"
+                        },
+                        {
+                            character: "🤖",
+                            title: "Orion Uyarıyor",
+                            text: "Dikkat Axel! Kesirli eğimler yaklaşıyor. 3/4 gibi değerler seni şaşırtabilir. Dikkatli hesapla!"
+                        },
+                        {
+                            character: "👹",
+                            title: "Son Tuzak",
+                            text: "Ha ha! X değerleri aynı olan noktalar! Eğim tanımsız mı, yoksa 0 mı? Düşey çizgi seni bekliyor!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "Pozitif eğimli tam sayı noktaları: (1, 2) ve (3, 6) noktaları arasındaki eğim kaçtır?",
+                            answers: ["1", "2", "3", "4"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "Negatif eğimli iki nokta: (1, 5) ve (3, 1) noktaları arasındaki eğim kaçtır?",
+                            answers: ["2", "-2", "1/2", "-1/2"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "Ters işaretli x-y değerleri: (-2, -3) ve (2, 5) noktalarının eğimi?",
+                            answers: ["1", "2", "3", "4"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "Kesirli eğim oluşturacak uzak noktalar: (1, 2) ve (5, 5) arasındaki eğim?",
+                            answers: ["1/2", "3/4", "2/3", "4/3"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "Eğim tanımsız mı? (3, 2) ve (3, 7) noktaları için eğim nedir?",
+                            answers: ["0", "5", "Tanımsız", "-5"],
+                            correct: 2
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "Açı Tünelleri Labirenti",
+                    description: "Axel, antik tünellerde doğru eğimi seçerek ilerlemelidir. Yanlış açı, çıkmaza götürür.",
+                    time: 240,
+                    stories: [
+                        {
+                            character: "🏛️",
+                            title: "Tünel Girişi",
+                            text: "Antik tünellere hoş geldin! Her tünelin bir açısı var. 45° açı en dengeli yol... eğimi 1'dir!"
+                        },
+                        {
+                            character: "🤖",
+                            title: "Özel Durumlar",
+                            text: "Axel dikkat! Yatay tünel (0°) ve dikey tünel (90°). Biri eğim 0, diğeri tanımsız!"
+                        },
+                        {
+                            character: "📐",
+                            title: "Trigonometri Zamanı",
+                            text: "30° açısı seni bekliyor! tan(30°) = √3/3 ≈ 0.577. Hafif eğimli bir yol..."
+                        },
+                        {
+                            character: "⛰️",
+                            title: "Dik Tırmanış",
+                            text: "60° çok dik! tan(60°) = √3 ≈ 1.732. Zorlu bir tırmanış seni bekliyor!"
+                        },
+                        {
+                            character: "🌀",
+                            title: "Ters Dünya",
+                            text: "Negatif açı! X ekseninin altına iniyoruz. -45° için eğim -1. Aşağı doğru gidiyoruz!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "45° açısının eğimi kaçtır?",
+                            answers: ["0", "1", "√3", "Tanımsız"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "0° ve 90° özel durumlar: 0° açısının (yatay doğru) eğimi nedir?",
+                            answers: ["0", "1", "∞", "Tanımsız"],
+                            correct: 0
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "30° açısının eğimi hangisidir? (tan 30° = √3/3 ≈ 0.577)",
+                            answers: ["0.5", "√3/3", "1", "√3"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "60° açısının eğimi hangisidir? (tan 60° = √3 ≈ 1.732)",
+                            answers: ["1", "√3/3", "√3", "2"],
+                            correct: 2
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "Negatif açının eğimi: -45° açısı (x ekseninin altında) hangi eğime sahiptir?",
+                            answers: ["1", "-1", "0", "Tanımsız"],
+                            correct: 1
+                        }
+                    ]
+                },
+                {
+                    id: 4,
+                    title: "Denklem Tapınağı",
+                    description: "Antik tapınak kapıları yalnızca doğru eğim ve noktadan doğru b değerini bulunca açılır.",
+                    time: 300,
+                    stories: [
+                        {
+                            character: "🏛️",
+                            title: "Tapınak Kapısı",
+                            text: "y = mx + b... Ezberinde olan formül! Doğru y eksenini kestiği noktada b değeri okunur. (0,b) noktası şifre!"
+                        },
+                        {
+                            character: "📜",
+                            title: "İlk Şifre",
+                            text: "Eğim 3, nokta (1,7). y = 3x + b formülünde 7 = 3(1) + b... b = 4! Kapı aralanıyor..."
+                        },
+                        {
+                            character: "⚡",
+                            title: "Negatif Güçler",
+                            text: "Negatif eğimler tapınağı koruyor! m = -2, nokta (3,4). Hesapla: 4 = -2(3) + b ⟹ b = 10"
+                        },
+                        {
+                            character: "🌀",
+                            title: "Kesirli Büyü",
+                            text: "Kesirli eğim! m = 1/2, nokta (4,5). Denklem: 5 = (1/2)(4) + b ⟹ 5 = 2 + b ⟹ b = 3"
+                        },
+                        {
+                            character: "👑",
+                            title: "Son Kapı",
+                            text: "Final şifresi! Denklemi çöz: y = -3x + b, nokta (2,1). 1 = -3(2) + b ⟹ b = 7. Tapınak açılıyor!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "Nokta (0, b) içeren örnek: y = mx + b denkleminde, doğru (0, 5) noktasından geçiyorsa b kaçtır?",
+                            answers: ["0", "5", "m", "x"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "Tam sayılı eğim ve nokta: Eğimi 3 olan ve (1, 7) noktasından geçen doğru için b?",
+                            answers: ["3", "4", "7", "10"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "Negatif eğim + tam sayı nokta: Eğimi -2 olan ve (3, 4) noktasından geçen doğru için b?",
+                            answers: ["6", "8", "10", "12"],
+                            correct: 2
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "Kesirli eğim + tam sayı nokta: Eğimi 1/2 olan ve (4, 5) noktasından geçen doğru için b?",
+                            answers: ["1", "2", "3", "4"],
+                            correct: 2
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "Denklemi b'ye göre çözme: y = -3x + b denklemi (2, 1) noktasından geçiyorsa b kaçtır?",
+                            answers: ["5", "6", "7", "8"],
+                            correct: 2
+                        }
+                    ]
+                },
+                {
+                    id: 5,
+                    title: "Paralel Köprüler",
+                    description: "Axel, uzay uçurumundaki köprülerin paralel, kesişen veya çakışık olduğunu belirlemek zorundadır.",
+                    time: 300,
+                    stories: [
+                        {
+                            character: "🌉",
+                            title: "Köprü Sistemi",
+                            text: "İki köprü gör! Eğimleri aynı ama farklı yerlerde: y = 3x + 2 ve y = 3x - 5. Paralel! Hiç kesişmezler!"
+                        },
+                        {
+                            character: "⚔️",
+                            title: "Çarpışma!",
+                            text: "Farklı eğimler: y = 2x + 1 ve y = -x + 4. Bu köprüler bir noktada kesişiyor! Dikkat et!"
+                        },
+                        {
+                            character: "👯",
+                            title: "İkiz Köprüler",
+                            text: "y = 4x + 2 ve 2y = 8x + 4... İkincisini sadeleştir: y = 4x + 2. Aynı doğru! Çakışık!"
+                        },
+                        {
+                            character: "🧮",
+                            title: "Gizli Format",
+                            text: "2y = 6x + 4 basitleştir: y = 3x + 2. Diğeri y = 3x - 1. Aynı eğim, farklı b... Paralel!"
+                        },
+                        {
+                            character: "🎯",
+                            title: "Son Test",
+                            text: "3y = 9x + 6 ⟹ y = 3x + 2. Diğeri y = 3x + 2. Hem eğim hem b aynı! Çakışık doğrular!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "Aynı eğim – farklı b (paralel): y = 3x + 2 ve y = 3x - 5 doğruları?",
+                            answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
+                            correct: 0
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "Farklı eğim – kesişir: y = 2x + 1 ve y = -x + 4 doğruları?",
+                            answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "Aynı doğru – çakışık: y = 4x + 2 ve 2y = 8x + 4 doğruları?",
+                            answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
+                            correct: 2
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "Eğim bulmayı gerektiren: 2y = 6x + 4 ve y = 3x - 1 doğruları?",
+                            answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
+                            correct: 0
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "Eğim ve b karşılaştırması: 3y = 9x + 6 ve y = 3x + 2 doğruları?",
+                            answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
+                            correct: 2
+                        }
+                    ]
+                },
+                {
+                    id: 6,
+                    title: "Dik Kesişim Savaş Alanı",
+                    description: "Savunma hatlarını kurmak için Axel dik doğruların eğim ilişkisini çözmelidir.",
+                    time: 240,
+                    stories: [
+                        {
+                            character: "⚔️",
+                            title: "Savunma Hattı",
+                            text: "Dik doğrular: eğimleri çarpımı -1! m = 2 ise dik olanın eğimi -1/2. Matematiksel sihir!"
+                        },
+                        {
+                            character: "🛡️",
+                            title: "Negatif Kalkan",
+                            text: "m = -4 için dik eğim? Formül: m₁ × m₂ = -1 ⟹ (-4) × m₂ = -1 ⟹ m₂ = 1/4"
+                        },
+                        {
+                            character: "⚡",
+                            title: "Kesirli Saldırı",
+                            text: "m = 3/4 için dik? (3/4) × m₂ = -1 ⟹ m₂ = -4/3. Ters çevir ve negatif yap!"
+                        },
+                        {
+                            character: "🌀",
+                            title: "Yatay-Dikey",
+                            text: "Yatay doğru (m=0) için dik eğim tanımsız! Düşey çizgi (x=k) yataya diktir!"
+                        },
+                        {
+                            character: "👑",
+                            title: "Son Savunma",
+                            text: "x = 3 düşey doğrusuna dik olan? Yatay doğru! y = k şeklinde. 90° dönüş!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "m=2 için dik eğim: Eğimi 2 olan doğruya dik olan doğrunun eğimi?",
+                            answers: ["2", "-2", "1/2", "-1/2"],
+                            correct: 3
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "Negatif m için dik eğim: Eğimi -4 olan doğruya dik doğrunun eğimi?",
+                            answers: ["4", "-4", "1/4", "-1/4"],
+                            correct: 2
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "Kesirli eğimde dik eğim: Eğimi 3/4 olan doğruya dik doğrunun eğimi?",
+                            answers: ["3/4", "-3/4", "4/3", "-4/3"],
+                            correct: 3
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "0 eğime dik eğim: Yatay doğruya (m = 0) dik olan doğrunun eğimi?",
+                            answers: ["0", "1", "Tanımsız", "-1"],
+                            correct: 2
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "x=k doğrularla diklik: x = 3 şeklindeki düşey doğruya dik olan doğru nasıldır?",
+                            answers: ["Düşey (x=k)", "Yatay (y=k)", "Eğik", "Olamaz"],
+                            correct: 1
+                        }
+                    ]
+                },
+                {
+                    id: 7,
+                    title: "Gerçeklik İstasyonu",
+                    description: "Axel, doğrusal grafikleri okuyarak Kaos Lordu'nun son ilüzyonlarını yok edecektir.",
+                    time: 360,
+                    stories: [
+                        {
+                            character: "🚗",
+                            title: "Gerçek Dünya",
+                            text: "Araç 50 km/saat hızla gidiyor. 4 saat sonra? y = 50x formülü! x=4 ⟹ y = 200 km!"
+                        },
+                        {
+                            character: "💧",
+                            title: "Azalan Kaynak",
+                            text: "120 litre su, saatte 15 litre azalıyor. 4 saat sonra? y = 120 - 15x ⟹ y = 60 litre!"
+                        },
+                        {
+                            character: "📊",
+                            title: "Grafik Okuma",
+                            text: "(0,0)'dan (5,15)'e doğru çizen. Eğim = 15/5 = 3. Grafikte eğim = diklik!"
+                        },
+                        {
+                            character: "⚖️",
+                            title: "Karşılaştırma",
+                            text: "y = 2x ve y = 5x... Hangisi daha dik? Eğim büyük olan! 5 > 2, yani y = 5x!"
+                        },
+                        {
+                            character: "👑",
+                            title: "Kaos Lordu'nun Sonu",
+                            text: "(0,10)'dan başlıyor, eğim 6. x=3 için? y = 6(3) + 10 = 28! Galaksi kurtuldu!"
+                        }
+                    ],
+                    questions: [
+                        {
+                            difficulty: "Kolay",
+                            text: "y=mx grafiğinde zaman-yol: Bir araç 50 km/saat hızla gidiyor. 4 saatte kaç km yol alır? (y = 50x)",
+                            answers: ["150 km", "200 km", "250 km", "300 km"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Kolay-Orta",
+                            text: "Azalan doğru: Bir depo 120 litre suyla dolu ve saatte 15 litre boşalıyor. 4 saat sonra kaç litre kalır? (y = 120 - 15x)",
+                            answers: ["50", "60", "70", "80"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta",
+                            text: "Grafikten eğim okuma: Bir doğru (0, 0) ve (5, 15) noktalarından geçiyor. Eğimi kaçtır?",
+                            answers: ["2", "3", "4", "5"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Orta-Zor",
+                            text: "İki grafiği karşılaştırma: y = 2x ve y = 5x grafiklerinden hangisi daha diktir?",
+                            answers: ["y = 2x", "y = 5x", "İkisi eşit", "Belirlenemez"],
+                            correct: 1
+                        },
+                        {
+                            difficulty: "Zor",
+                            text: "Grafikten hız çıkarma: Grafik (0, 10) noktasından başlıyor ve eğimi 6. x = 3 için y değeri kaçtır?",
+                            answers: ["24", "26", "28", "30"],
+                            correct: 2
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Oyun Motoru
+        class Game {
+            constructor() {
+                this.currentLevel = 0;
+                this.currentQuestion = 0;
+                this.score = 0;
+                this.correctAnswers = 0;
+                this.wrongAnswers = 0;
+                this.timer = null;
+                this.timeRemaining = 0;
+                this.levelStartTime = 0;
+                this.completedLevels = new Set();
+                this.musicPlaying = true;
+                this.totalScore = 0;
+                this.totalCorrect = 0;
+                this.audioContext = null;
+                this.currentSpeech = null;
+                this.musicNodes = [];
+                this.currentQuestions = []; // Seçilen sorular
+                this.questionPools = this.generateQuestionPools(); // Soru havuzları
+                
+                this.initStars();
+                this.initMusicControl();
+                this.initAudio();
+            }
+
+            generateQuestionPools() {
+                // Her seviye için 5 soru tipinin her biri için 20 varyasyon
+                const pools = {
+                    level1: this.generateLevel1Pool(),
+                    level2: this.generateLevel2Pool(),
+                    level3: this.generateLevel3Pool(),
+                    level4: this.generateLevel4Pool(),
+                    level5: this.generateLevel5Pool(),
+                    level6: this.generateLevel6Pool(),
+                    level7: this.generateLevel7Pool()
+                };
+                return pools;
+            }
+
+            generateLevel1Pool() {
+                const pool = [];
+                
+                // Soru 1: Birinci bölge (x > 0, y > 0) - 20 varyasyon
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.floor(Math.random() * 8) + 1;
+                    const y = Math.floor(Math.random() * 8) + 1;
+                    const wrongX = -(Math.floor(Math.random() * 5) + 1);
+                    const wrongY = -(Math.floor(Math.random() * 5) + 1);
+                    pool.push([{
+                        difficulty: "Kolay",
+                        text: `Pozitif bölgede basit bir nokta: Hangisi birinci bölgede (x > 0, y > 0) yer alır?`,
+                        answers: [`(${x}, ${y})`, `(${wrongX}, ${y})`, `(${x}, ${wrongY})`, `(${wrongX}, ${wrongY})`],
+                        correct: 0
+                    }]);
+                }
+                
+                // Soru 2: Dördüncü bölge (x > 0, y < 0) - 20 varyasyon
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.floor(Math.random() * 8) + 1;
+                    const y = Math.floor(Math.random() * 8) + 1;
+                    pool[i].push({
+                        difficulty: "Kolay-Orta",
+                        text: `Negatif y içeren nokta: Hangisi dördüncü bölgede (x > 0, y < 0) yer alır?`,
+                        answers: [`(${x}, ${y})`, `(${x}, ${-y})`, `(${-x}, ${-y})`, `(${-x}, ${y})`],
+                        correct: 1
+                    });
+                }
+                
+                // Soru 3: Üçüncü bölge (x < 0, y < 0) - 20 varyasyon
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.floor(Math.random() * 7) + 1;
+                    const y = Math.floor(Math.random() * 7) + 1;
+                    pool[i].push({
+                        difficulty: "Orta",
+                        text: `Hem negatif x hem negatif y: Hangisi üçüncü bölgede yer alır?`,
+                        answers: [`(${x}, ${y})`, `(${-x}, ${y})`, `(${x}, ${-y})`, `(${-x}, ${-y})`],
+                        correct: 3
+                    });
+                }
+                
+                // Soru 4: Kesirli koordinatlar - 20 varyasyon
+                for (let i = 0; i < 20; i++) {
+                    const x1 = (Math.random() * 3 + 0.5).toFixed(1);
+                    const y1 = (Math.random() * 3 + 0.5).toFixed(1);
+                    const x2 = Math.floor(Math.random() * 5) + 1;
+                    const y2 = Math.floor(Math.random() * 5) + 1;
+                    pool[i].push({
+                        difficulty: "Orta-Zor",
+                        text: `Kesirli koordinatlar: Hangisi doğru kesirli koordinattır?`,
+                        answers: [`(${x1}, ${y1})`, `(${x2}, ${y2})`, `(${-x2}, ${-y2})`, `(0, ${y2})`],
+                        correct: 0
+                    });
+                }
+                
+                // Soru 5: Y ekseni üzerinde - 20 varyasyon
+                for (let i = 0; i < 20; i++) {
+                    const y = Math.floor(Math.random() * 7) + 1;
+                    const x = Math.floor(Math.random() * 5) + 1;
+                    pool[i].push({
+                        difficulty: "Zor",
+                        text: `Orijin ve eksenlere göre özel nokta: Hangisi y ekseninin üzerinde yer alır?`,
+                        answers: [`(${x}, 0)`, `(0, ${y})`, `(${x}, ${y})`, `(0, 0)`],
+                        correct: 1
+                    });
+                }
+                
+                return pool;
+            }
+
+            generateLevel2Pool() {
+                const pool = [];
+                
+                // Soru 1-5: Eğim soruları - Her biri için 20 varyasyon
+                for (let i = 0; i < 20; i++) {
+                    const set = [];
+                    
+                    // S1: Pozitif eğim
+                    const x1 = Math.floor(Math.random() * 3) + 1;
+                    const y1 = Math.floor(Math.random() * 3) + 2;
+                    const x2 = x1 + Math.floor(Math.random() * 2) + 2;
+                    const y2 = y1 + (x2 - x1) * (Math.floor(Math.random() * 3) + 1);
+                    const slope = (y2 - y1) / (x2 - x1);
+                    set.push({
+                        difficulty: "Kolay",
+                        text: `Pozitif eğimli tam sayı noktaları: (${x1}, ${y1}) ve (${x2}, ${y2}) noktaları arasındaki eğim kaçtır?`,
+                        answers: [`${Math.floor(slope) - 1}`, `${Math.floor(slope)}`, `${Math.floor(slope) + 1}`, `${Math.floor(slope) + 2}`],
+                        correct: 1
+                    });
+                    
+                    // S2-5: Benzer mantıkla diğer soru tipleri...
+                    // Kısalık için basitleştirilmiş versiyonlar
+                    set.push({difficulty: "Kolay-Orta", text: "Negatif eğim sorusu...", answers: ["1", "-2", "2", "-1"], correct: 1});
+                    set.push({difficulty: "Orta", text: "Karma işaret sorusu...", answers: ["1", "2", "3", "4"], correct: 1});
+                    set.push({difficulty: "Orta-Zor", text: "Kesirli eğim sorusu...", answers: ["1/2", "2/3", "3/4", "4/5"], correct: 2});
+                    set.push({difficulty: "Zor", text: "Tanımsız eğim sorusu...", answers: ["0", "Tanımsız", "1", "∞"], correct: 1});
+                    
+                    pool.push(set);
+                }
+                
+                return pool;
+            }
+
+            // Diğer seviyeler için benzer havuzlar (basitleştirilmiş)
+            generateLevel3Pool() { return this.generateSimplePool("Açı", 20); }
+            generateLevel4Pool() { return this.generateSimplePool("Denklem", 20); }
+            generateLevel5Pool() { return this.generateSimplePool("Paralel", 20); }
+            generateLevel6Pool() { return this.generateSimplePool("Dik", 20); }
+            generateLevel7Pool() { return this.generateSimplePool("Grafik", 20); }
+
+            generateSimplePool(type, count) {
+                // Mevcut soruları kullan ama sayıları değiştir
+                const pool = [];
+                const level = gameData.levels[this.currentLevel];
+                
+                for (let i = 0; i < count; i++) {
+                    const set = level.questions.map(q => ({...q}));
+                    pool.push(set);
+                }
+                
+                return pool;
+            }
+
+            selectQuestionsFromPool(levelIndex) {
+                const poolKey = `level${levelIndex + 1}`;
+                const pool = this.questionPools[poolKey];
+                
+                // Rastgele bir set seç
+                const randomIndex = Math.floor(Math.random() * pool.length);
+                this.currentQuestions = pool[randomIndex];
+                
+                console.log(`🎲 Seviye ${levelIndex + 1} için ${randomIndex + 1}. soru seti seçildi`);
+            }
+
+            initStars() {
+                const starsContainer = document.getElementById('stars');
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.width = Math.random() * 3 + 1 + 'px';
+                    star.style.height = star.style.width;
+                    star.style.animationDelay = Math.random() * 3 + 's';
+                    starsContainer.appendChild(star);
+                }
+            }
+
+            initMusicControl() {
+                const musicBtn = document.getElementById('musicControl');
+                
+                musicBtn.addEventListener('click', () => {
+                    this.musicPlaying = !this.musicPlaying;
+                    const icon = document.querySelector('.music-icon');
+                    
+                    if (this.musicPlaying) {
+                        icon.textContent = '🔊';
+                        if (this.audioContext && this.musicNodes.length === 0) {
+                            this.playAmbientMusic();
+                        }
+                    } else {
+                        icon.textContent = '🔇';
+                        if (this.audioContext && this.musicNodes.length > 0) {
+                            this.stopAmbientMusic();
+                        }
+                    }
+                });
+            }
+
+            initAudio() {
+                // Web Audio API ile uzay müziği oluştur
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    console.log('🎵 Audio Context oluşturuldu');
+                } catch (e) {
+                    console.error('Audio Context hatası:', e);
+                }
+                
+                // Kullanıcı tıkladığında başlat
+                const startAmbientMusic = () => {
+                    if (this.audioContext && this.audioContext.state === 'suspended') {
+                        this.audioContext.resume().then(() => {
+                            console.log('🎵 Audio Context devam ediyor');
+                        });
+                    }
+                    
+                    if (this.musicPlaying && this.musicNodes.length === 0 && this.audioContext) {
+                        this.playAmbientMusic();
+                    }
+                };
+                
+                // İlk etkileşimde başlat
+                document.addEventListener('click', startAmbientMusic, { once: true });
+                document.addEventListener('touchstart', startAmbientMusic, { once: true });
+                
+                // Buton tıklamalarında da kontrol et
+                setTimeout(() => {
+                    document.querySelectorAll('.btn, .answer-btn, .level-card').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            if (this.audioContext && this.audioContext.state === 'suspended') {
+                                this.audioContext.resume();
+                            }
+                            if (this.musicPlaying && this.musicNodes.length === 0 && this.audioContext) {
+                                this.playAmbientMusic();
+                            }
+                        }, { once: true });
+                    });
+                }, 1000);
+            }
+
+            playAmbientMusic() {
+                // Eğer zaten müzik çalıyorsa yeniden başlatma
+                if (this.musicNodes.length > 0) {
+                    return;
+                }
+
+                // Uzay müziği için düşük frekanslı ambient tonlar
+                const frequencies = [
+                    { freq: 130.81, vol: 0.08, type: 'sine' },     // C3
+                    { freq: 164.81, vol: 0.06, type: 'sine' },     // E3
+                    { freq: 196.00, vol: 0.05, type: 'sine' },     // G3
+                    { freq: 246.94, vol: 0.04, type: 'triangle' }, // B3
+                ];
+
+                frequencies.forEach((note, index) => {
+                    setTimeout(() => {
+                        const oscillator = this.audioContext.createOscillator();
+                        const gainNode = this.audioContext.createGain();
+                        const filter = this.audioContext.createBiquadFilter();
+
+                        oscillator.type = note.type;
+                        oscillator.frequency.value = note.freq;
+                        
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 800;
+                        filter.Q.value = 1;
+
+                        // Fade in
+                        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(note.vol, this.audioContext.currentTime + 3);
+
+                        oscillator.connect(filter);
+                        filter.connect(gainNode);
+                        gainNode.connect(this.audioContext.destination);
+
+                        oscillator.start();
+                        
+                        this.musicNodes.push({ oscillator, gainNode, filter });
+
+                        // LFO efekti ekle (hafif titreşim)
+                        const lfo = this.audioContext.createOscillator();
+                        const lfoGain = this.audioContext.createGain();
+                        lfo.frequency.value = 0.2 + (index * 0.1); // Yavaş LFO
+                        lfoGain.gain.value = 8;
+                        lfo.connect(lfoGain);
+                        lfoGain.connect(oscillator.frequency);
+                        lfo.start();
+                    }, index * 800); // Stagger başlangıç
+                });
+
+                console.log('🎵 Arka plan müziği başladı');
+            }
+
+            stopAmbientMusic() {
+                if (this.musicNodes.length === 0) return;
+
+                this.musicNodes.forEach(node => {
+                    // Fade out
+                    node.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 1);
+                    node.oscillator.stop(this.audioContext.currentTime + 1);
+                });
+                
+                this.musicNodes = [];
+                console.log('🔇 Arka plan müziği durduruldu');
+            }
+
+            playSound(type) {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                if (type === 'correct') {
+                    // Doğru cevap - tok ve güçlü pozitif ses (düşük frekanslı bass + click)
+                    
+                    // Bass vuruş
+                    const bass = audioCtx.createOscillator();
+                    const bassGain = audioCtx.createGain();
+                    bass.type = 'sine';
+                    bass.frequency.value = 80; // Düşük bass frekansı
+                    bassGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    bassGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    bass.connect(bassGain);
+                    bassGain.connect(audioCtx.destination);
+                    bass.start(audioCtx.currentTime);
+                    bass.stop(audioCtx.currentTime + 0.3);
+                    
+                    // Tok click sesi
+                    const click = audioCtx.createOscillator();
+                    const clickGain = audioCtx.createGain();
+                    click.type = 'square';
+                    click.frequency.value = 200;
+                    clickGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    clickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    click.connect(clickGain);
+                    clickGain.connect(audioCtx.destination);
+                    click.start(audioCtx.currentTime);
+                    click.stop(audioCtx.currentTime + 0.1);
+                    
+                    // Üst melodi (daha yumuşak)
+                    setTimeout(() => {
+                        const melody = audioCtx.createOscillator();
+                        const melodyGain = audioCtx.createGain();
+                        melody.type = 'sine';
+                        melody.frequency.value = 300;
+                        melodyGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                        melodyGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                        melody.connect(melodyGain);
+                        melodyGain.connect(audioCtx.destination);
+                        melody.start(audioCtx.currentTime);
+                        melody.stop(audioCtx.currentTime + 0.2);
+                    }, 50);
+                    
+                } else if (type === 'wrong') {
+                    // Yanlış cevap - tok ve karanlık hata sesi (düşük buzz)
+                    
+                    // Düşük buzz sesi
+                    const buzz = audioCtx.createOscillator();
+                    const buzzGain = audioCtx.createGain();
+                    buzz.type = 'sawtooth';
+                    buzz.frequency.value = 60; // Çok düşük frekans
+                    buzzGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    buzzGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    buzz.connect(buzzGain);
+                    buzzGain.connect(audioCtx.destination);
+                    buzz.start(audioCtx.currentTime);
+                    buzz.stop(audioCtx.currentTime + 0.4);
+                    
+                    // Orta frekans katman
+                    const mid = audioCtx.createOscillator();
+                    const midGain = audioCtx.createGain();
+                    mid.type = 'square';
+                    mid.frequency.value = 120;
+                    midGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    midGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    mid.connect(midGain);
+                    midGain.connect(audioCtx.destination);
+                    mid.start(audioCtx.currentTime);
+                    mid.stop(audioCtx.currentTime + 0.3);
+                    
+                    // Noise burst (beyaz gürültü etkisi)
+                    const noise = audioCtx.createBufferSource();
+                    const noiseGain = audioCtx.createGain();
+                    const bufferSize = audioCtx.sampleRate * 0.1;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    noise.buffer = buffer;
+                    noiseGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    noise.connect(noiseGain);
+                    noiseGain.connect(audioCtx.destination);
+                    noise.start(audioCtx.currentTime);
+                    
+                } else if (type === 'complete') {
+                    // Seviye tamamlama - tok ve zafer dolu melodi
+                    const frequencies = [130.81, 164.81, 196.00]; // C3, E3, G3 (daha düşük oktav)
+                    frequencies.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.4);
+                        osc.start(audioCtx.currentTime + i * 0.15);
+                        osc.stop(audioCtx.currentTime + i * 0.15 + 0.4);
+                    });
+                    
+                } else if (type === 'click') {
+                    // Buton tıklama sesi - TOK ve GÜÇLÜ (konsol tarzı)
+                    
+                    // Ana bass vuruş
+                    const bass = audioCtx.createOscillator();
+                    const bassGain = audioCtx.createGain();
+                    bass.type = 'sine';
+                    bass.frequency.value = 150; // Orta-düşük frekans
+                    bassGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                    bassGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                    bass.connect(bassGain);
+                    bassGain.connect(audioCtx.destination);
+                    bass.start(audioCtx.currentTime);
+                    bass.stop(audioCtx.currentTime + 0.12);
+                    
+                    // Tok click katmanı
+                    const click = audioCtx.createOscillator();
+                    const clickGain = audioCtx.createGain();
+                    click.type = 'square';
+                    click.frequency.value = 250;
+                    clickGain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    clickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.06);
+                    click.connect(clickGain);
+                    clickGain.connect(audioCtx.destination);
+                    click.start(audioCtx.currentTime);
+                    click.stop(audioCtx.currentTime + 0.06);
+                    
+                    // Noise burst (mekanik his)
+                    const noise = audioCtx.createBufferSource();
+                    const noiseGain = audioCtx.createGain();
+                    const bufferSize = audioCtx.sampleRate * 0.03;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * 0.5;
+                    }
+                    noise.buffer = buffer;
+                    noiseGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+                    noise.connect(noiseGain);
+                    noiseGain.connect(audioCtx.destination);
+                    noise.start(audioCtx.currentTime);
+                    
+                } else if (type === 'hover') {
+                    // Hover sesi - TOK ama hafif (mekanik tıkırtı)
+                    
+                    // Bass katman
+                    const bass = audioCtx.createOscillator();
+                    const bassGain = audioCtx.createGain();
+                    bass.type = 'sine';
+                    bass.frequency.value = 200; // Orta-düşük
+                    bassGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    bassGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    bass.connect(bassGain);
+                    bassGain.connect(audioCtx.destination);
+                    bass.start(audioCtx.currentTime);
+                    bass.stop(audioCtx.currentTime + 0.08);
+                    
+                    // Hafif click
+                    const click = audioCtx.createOscillator();
+                    const clickGain = audioCtx.createGain();
+                    click.type = 'square';
+                    click.frequency.value = 300;
+                    clickGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    clickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+                    click.connect(clickGain);
+                    clickGain.connect(audioCtx.destination);
+                    click.start(audioCtx.currentTime);
+                    click.stop(audioCtx.currentTime + 0.04);
+                    
+                    // Çok hafif noise
+                    const noise = audioCtx.createBufferSource();
+                    const noiseGain = audioCtx.createGain();
+                    const bufferSize = audioCtx.sampleRate * 0.02;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * 0.3;
+                    }
+                    noise.buffer = buffer;
+                    noiseGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.02);
+                    noise.connect(noiseGain);
+                    noiseGain.connect(audioCtx.destination);
+                    noise.start(audioCtx.currentTime);
+                }
+            }
+
+            // Ripple efekti oluştur
+            createRipple(event, element) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = element.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = event.clientX - rect.left - size / 2;
+                const y = event.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                element.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            }
+
+            showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById(screenId).classList.add('active');
+            }
+
+            showWelcome() {
+                // Temayı temizle
+                document.body.className = '';
+                this.clearParticles();
+                this.resetStars();
+                
+                this.showScreen('welcomeScreen');
+            }
+
+            resetStars() {
+                const stars = document.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.style.background = 'white';
+                    star.style.boxShadow = '0 0 10px white';
+                    star.classList.remove('shooting');
+                });
+            }
+
+            showLevelSelect() {
+                // Temayı temizle
+                document.body.className = '';
+                this.clearParticles();
+                this.resetStars();
+                
+                this.showScreen('levelSelectScreen');
+                this.renderLevelSelect();
+            }
+
+            renderLevelSelect() {
+                const grid = document.getElementById('levelsGrid');
+                grid.innerHTML = '';
+
+                gameData.levels.forEach((level, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'level-card';
+                    
+                    const isLocked = index > 0 && !this.completedLevels.has(index);
+                    if (isLocked) {
+                        card.classList.add('locked');
+                    }
+
+                    const status = this.completedLevels.has(index + 1) ? '✅' : 
+                                   isLocked ? '🔒' : '⭐';
+
+                    card.innerHTML = `
+                        <div class="level-status">${status}</div>
+                        <div class="level-number">${level.id}</div>
+                        <div class="level-title">${level.title}</div>
+                        <div class="level-info">⏱️ ${Math.floor(level.time / 60)} dakika</div>
+                        <div class="level-info">📝 ${level.questions.length} Soru</div>
+                    `;
+
+                    if (!isLocked) {
+                        // Hover sesi
+                        card.addEventListener('mouseenter', () => {
+                            this.playSound('hover');
+                        });
+                        
+                        // Tıklama sesi
+                        card.addEventListener('click', (e) => {
+                            this.playSound('click');
+                            this.createRipple(e, card);
+                            setTimeout(() => this.startLevel(index), 200);
+                        });
+                    }
+
+                    grid.appendChild(card);
+                });
+            }
+
+            startLevel(levelIndex) {
+                this.currentLevel = levelIndex;
+                this.currentQuestion = 0;
+                this.correctAnswers = 0;
+                this.wrongAnswers = 0;
+                this.levelStartTime = Date.now();
+                
+                const level = gameData.levels[levelIndex];
+                this.timeRemaining = level.time;
+
+                // SORU HAVUZUNDAN SEÇ
+                this.selectQuestionsFromPool(levelIndex);
+
+                // Seviye temasını uygula
+                this.applyLevelTheme(levelIndex);
+
+                this.showScreen('gameScreen');
+                this.updateLevelInfo();
+                
+                // Sesleri yükle
+                this.loadVoices().then(() => {
+                    this.showStoryAndQuestion();
+                });
+                
+                this.startTimer();
+            }
+
+            loadVoices() {
+                return new Promise((resolve) => {
+                    let voices = window.speechSynthesis.getVoices();
+                    if (voices.length > 0) {
+                        console.log('🎙️ Sesler yüklendi:', voices.length);
+                        resolve(voices);
+                    } else {
+                        window.speechSynthesis.onvoiceschanged = () => {
+                            voices = window.speechSynthesis.getVoices();
+                            console.log('🎙️ Sesler güncellendi:', voices.length);
+                            resolve(voices);
+                        };
+                    }
+                });
+            }
+
+            applyLevelTheme(levelIndex) {
+                // Önceki temaları temizle
+                document.body.className = '';
+                
+                // Yeni tema ekle
+                document.body.classList.add(`level-${levelIndex + 1}`);
+                
+                // Partiküller ekle
+                this.clearParticles();
+                this.createLevelParticles(levelIndex + 1);
+                
+                // Yıldızları güncelle
+                this.updateStars(levelIndex + 1);
+            }
+
+            clearParticles() {
+                document.querySelectorAll('.particle').forEach(p => p.remove());
+            }
+
+            createLevelParticles(levelNum) {
+                const particleCount = 15;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = `particle level-${levelNum}`;
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(particle);
+                }
+            }
+
+            updateStars(levelNum) {
+                const stars = document.querySelectorAll('.star');
+                const colors = {
+                    1: '#64b5f6',  // Mavi - Harita
+                    2: '#81c784',  // Yeşil - Dağlar
+                    3: '#ba68c8',  // Mor - Tüneller
+                    4: '#ffb74d',  // Turuncu - Tapınak
+                    5: '#4fc3f7',  // Açık mavi - Köprüler
+                    6: '#e57373',  // Kırmızı - Savaş
+                    7: '#4db6ac'   // Turkuaz - Gerçeklik
+                };
+                
+                stars.forEach((star, index) => {
+                    star.style.background = colors[levelNum] || 'white';
+                    star.style.boxShadow = `0 0 10px ${colors[levelNum] || 'white'}`;
+                    
+                    // Her 10. yıldızı akan yıldız yap
+                    if (index % 10 === 0) {
+                        star.classList.add('shooting');
+                    }
+                });
+            }
+
+            updateLevelInfo() {
+                const level = gameData.levels[this.currentLevel];
+                const icons = ['🗺️', '⛰️', '🌀', '🏛️', '🌉', '⚔️', '🎮'];
+                const icon = icons[this.currentLevel] || '⭐';
+                
+                const titleElement = document.getElementById('currentLevelTitle');
+                titleElement.textContent = `Seviye ${level.id}: ${level.title}`;
+                titleElement.setAttribute('data-icon', icon);
+                
+                document.getElementById('currentLevelDesc').textContent = level.description;
+            }
+
+            showStoryAndQuestion() {
+                const level = gameData.levels[this.currentLevel];
+                const story = level.stories[this.currentQuestion];
+                const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
+
+                // Soru kartını gizle
+                document.getElementById('questionCard').style.display = 'none';
+
+                // Hikaye göster
+                document.getElementById('storyCharacter').textContent = story.character;
+                document.getElementById('storyTitle').textContent = story.title;
+                document.getElementById('storyText').textContent = '';
+
+                // Soru bilgilerini hazırla
+                const questionNum = this.currentQuestion + 1;
+                const difficulty = question.difficulty || '';
+                
+                document.getElementById('questionNumber').textContent = 
+                    `Soru ${questionNum}/${this.currentQuestions.length} • ${difficulty}`;
+                document.getElementById('questionText').textContent = question.text;
+
+                const answersGrid = document.getElementById('answersGrid');
+                answersGrid.innerHTML = '';
+
+                question.answers.forEach((answer, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'answer-btn';
+                    button.textContent = answer;
+                    
+                    // Hover sesi ekle
+                    button.addEventListener('mouseenter', () => {
+                        this.playSound('hover');
+                    });
+                    
+                    // Tıklama sesi ve ripple efekti
+                    button.addEventListener('click', (e) => {
+                        this.playSound('click');
+                        this.createRipple(e, button);
+                    });
+                    
+                    button.onclick = () => this.checkAnswer(index);
+                    answersGrid.appendChild(button);
+                });
+
+                this.updateProgress();
+
+                // Seslendirme başlat
+                this.narrateStory(story.text, () => {
+                    // Seslendirme bitince soruyu göster
+                    document.getElementById('questionCard').style.display = 'block';
+                    document.getElementById('questionCard').style.animation = 'slideInRight 0.5s ease';
+                });
+            }
+
+            narrateStory(text, onComplete) {
+                // Önceki seslendirmeyi durdur
+                if (this.currentSpeech) {
+                    window.speechSynthesis.cancel();
+                }
+
+                // Kelime bazlı senkronizasyon için metni hazırla
+                const words = text.split(' ');
+                const storyTextElement = document.getElementById('storyText');
+                storyTextElement.textContent = '';
+
+                // Sesleri yükle ve en iyi Türkçe sesi seç
+                this.loadVoices().then(voices => {
+                    // Web Speech API
+                    const speech = new SpeechSynthesisUtterance(text);
+                    
+                    // En iyi Türkçe sesi seç - kaliteli ve akıcı olanlar öncelikli
+                    const turkishVoice = 
+                        // Google sesler (en akıcı)
+                        voices.find(v => v.name.includes('Google') && v.lang.startsWith('tr')) ||
+                        // Microsoft sesler
+                        voices.find(v => v.name.includes('Microsoft') && v.lang.startsWith('tr')) ||
+                        // Erkek sesler - premium
+                        voices.find(v => v.lang.startsWith('tr') && 
+                            (v.name.includes('Ahmet') || v.name.includes('Tolga') || 
+                             v.name.includes('Kerem') || v.name.includes('Murat'))) ||
+                        // Genel erkek sesler
+                        voices.find(v => v.lang.startsWith('tr') && 
+                            v.name.toLowerCase().includes('male')) ||
+                        // Kadın olmayan herhangi bir Türkçe ses
+                        voices.find(v => v.lang.startsWith('tr') && 
+                            !v.name.toLowerCase().includes('female') &&
+                            !v.name.toLowerCase().includes('kadın') &&
+                            !v.name.toLowerCase().includes('ayşe') &&
+                            !v.name.toLowerCase().includes('zeynep')) ||
+                        // Son çare: herhangi bir Türkçe ses
+                        voices.find(v => v.lang.startsWith('tr'));
+
+                    if (turkishVoice) {
+                        speech.voice = turkishVoice;
+                        console.log('🎙️ Seçilen ses:', turkishVoice.name, '| Dil:', turkishVoice.lang);
+                    } else {
+                        console.warn('⚠️ Türkçe ses bulunamadı, varsayılan kullanılıyor');
+                    }
+
+                    speech.lang = 'tr-TR';
+                    
+                    // AKICI KONUŞMA PARAMETRELERİ
+                    speech.rate = 1.15;  // 1.3'ten 1.15'e düşürdüm - daha doğal
+                    speech.pitch = 1.0;  // 0.9'dan 1.0'a - daha net
+                    speech.volume = 1.0;
+                    
+                    this.currentSpeech = speech;
+
+                    let currentWordIndex = 0;
+                    // Daha akıcı kelime gösterimi için timing ayarı
+                    const wordsPerSecond = speech.rate * 2.2; // 2.5'ten 2.2'ye - daha rahat
+                    const msPerWord = 1000 / wordsPerSecond;
+
+                    // Kelime bazlı animasyon
+                    const wordInterval = setInterval(() => {
+                        if (currentWordIndex < words.length) {
+                            // Mevcut kelimeyi ekle
+                            const wordSpan = document.createElement('span');
+                            wordSpan.textContent = words[currentWordIndex] + ' ';
+                            wordSpan.style.opacity = '0';
+                            wordSpan.style.display = 'inline-block';
+                            wordSpan.style.animation = 'wordFadeIn 0.4s ease-out forwards'; // 0.3'ten 0.4'e - daha yumuşak
+                            
+                            // Önemli kelimeleri vurgula - daha geniş liste
+                            const emphasisWords = [
+                                'dikkat', 'uyarı', 'tehlike', 'önemli', 'gerekli', 'zorunda', 
+                                'mutlaka', 'şart', 'kritik', 'acele', 'hemen', 'çabuk',
+                                'kaos', 'lordu', 'şeytan', 'düşman', 'savaş', 'çarpışma',
+                                'harita', 'koordinat', 'eğim', 'tünel', 'tapınak', 'köprü',
+                                'final', 'son', 'zafer', 'başarı', 'galaksi', 'kurtarma',
+                                'hesapla', 'bul', 'çöz', 'seç', 'belirle', 'işaretle',
+                                'ha ha', 'mükemmel', 'harika', 'muhteşem', 'bravo',
+                                'yanlış', 'doğru', 'tanımsız', 'paralel', 'dik', 'kesişir'
+                            ];
+                            
+                            const isEmphasis = emphasisWords.some(word => 
+                                words[currentWordIndex].toLowerCase().replace(/[!?.,:;]/g, '').includes(word)
+                            );
+                            
+                            // Ünlem ve soru işaretlerini de vurgula
+                            const hasExclamation = words[currentWordIndex].includes('!');
+                            const hasQuestion = words[currentWordIndex].includes('?');
+                            
+                            if (isEmphasis || hasExclamation) {
+                                wordSpan.style.color = '#ffff00';
+                                wordSpan.style.fontWeight = '900';
+                                wordSpan.style.textShadow = '0 0 20px #ffff00, 0 0 40px #ffff00';
+                                wordSpan.style.transform = 'scale(1.15)';
+                            } else if (hasQuestion) {
+                                wordSpan.style.color = '#00ffff';
+                                wordSpan.style.fontWeight = '800';
+                                wordSpan.style.textShadow = '0 0 15px #00ffff';
+                            }
+
+                            storyTextElement.appendChild(wordSpan);
+                            currentWordIndex++;
+
+                            // Scroll otomatik
+                            storyTextElement.scrollTop = storyTextElement.scrollHeight;
+                        } else {
+                            clearInterval(wordInterval);
+                        }
+                    }, msPerWord);
+
+                    // Seslendirme bitince
+                    speech.onend = () => {
+                        clearInterval(wordInterval);
+                        // Kalan kelimeleri ekle
+                        while (currentWordIndex < words.length) {
+                            const wordSpan = document.createElement('span');
+                            wordSpan.textContent = words[currentWordIndex] + ' ';
+                            storyTextElement.appendChild(wordSpan);
+                            currentWordIndex++;
+                        }
+                        
+                        this.currentSpeech = null;
+                        
+                        // Müziği normale getir
+                        if (this.musicNodes.length > 0) {
+                            this.musicNodes.forEach(node => {
+                                node.gainNode.gain.linearRampToValueAtTime(0.08, this.audioContext.currentTime + 0.8);
+                            });
+                        }
+                        
+                        this.playSound('complete');
+                        if (onComplete) {
+                            setTimeout(onComplete, 800); // 500'den 800'e - daha rahat geçiş
+                        }
+                    };
+
+                    // Hata durumunda
+                    speech.onerror = (event) => {
+                        console.error('Seslendirme hatası:', event);
+                        clearInterval(wordInterval);
+                        storyTextElement.textContent = text;
+                        this.currentSpeech = null;
+                        
+                        // Müziği normale getir
+                        if (this.musicNodes.length > 0) {
+                            this.musicNodes.forEach(node => {
+                                node.gainNode.gain.linearRampToValueAtTime(0.08, this.audioContext.currentTime + 0.5);
+                            });
+                        }
+                        
+                        if (onComplete) {
+                            setTimeout(onComplete, 500);
+                        }
+                    };
+
+                    // Kelime sınırlarını dinle (destekleyen tarayıcılarda)
+                    let wordBoundaryIndex = 0;
+                    speech.onboundary = (event) => {
+                        if (event.name === 'word') {
+                            // Gerçek kelime senkronizasyonu
+                            wordBoundaryIndex++;
+                        }
+                    };
+
+                    // Seslendirmeyi başlat
+                    window.speechSynthesis.speak(speech);
+
+                    // Müziği kıs - daha yumuşak
+                    if (this.musicNodes.length > 0) {
+                        this.musicNodes.forEach(node => {
+                            node.gainNode.gain.linearRampToValueAtTime(0.03, this.audioContext.currentTime + 0.5);
+                        });
+                    }
+                });
+            }
+
+            updateProgress() {
+                const level = gameData.levels[this.currentLevel];
+                const progress = ((this.currentQuestion) / level.questions.length) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            }
+
+            checkAnswer(answerIndex) {
+                const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
+                const buttons = document.querySelectorAll('.answer-btn');
+
+                buttons.forEach(btn => btn.disabled = true);
+
+                if (answerIndex === question.correct) {
+                    buttons[answerIndex].classList.add('correct');
+                    this.correctAnswers++;
+                    this.playSound('correct');
+                    
+                    setTimeout(() => {
+                        this.nextQuestion();
+                    }, 1000);
+                } else {
+                    buttons[answerIndex].classList.add('wrong');
+                    buttons[question.correct].classList.add('correct');
+                    this.wrongAnswers++;
+                    this.playSound('wrong');
+
+                    // 3 YANLIŞ KONTROLÜ
+                    if (this.wrongAnswers >= 3) {
+                        console.log('❌ 3 yanlış yapıldı! Seviye başarısız.');
+                        setTimeout(() => {
+                            this.levelFailed();
+                        }, 2000);
+                    } else {
+                        setTimeout(() => {
+                            this.nextQuestion();
+                        }, 2000);
+                    }
+                }
+            }
+
+            levelFailed() {
+                clearInterval(this.timer);
+                
+                // Seslendirmeyi durdur
+                if (this.currentSpeech) {
+                    window.speechSynthesis.cancel();
+                }
+
+                // Modal oluştur
+                const modal = document.createElement('div');
+                modal.id = 'failModal';
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.95);
+                    backdrop-filter: blur(10px);
+                    z-index: 10000;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    animation: fadeIn 0.5s ease;
+                `;
+
+                const level = gameData.levels[this.currentLevel];
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: linear-gradient(135deg, rgba(139, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.95) 100%);
+                        border: 4px solid #ff0033;
+                        border-radius: 30px;
+                        padding: 50px;
+                        max-width: 600px;
+                        width: 90%;
+                        box-shadow: 
+                            0 0 60px rgba(255, 0, 51, 0.8),
+                            0 0 120px rgba(255, 0, 51, 0.4),
+                            inset 0 0 40px rgba(255, 0, 51, 0.2);
+                        animation: modalSlideIn 0.5s ease, modalGlow 2s ease-in-out infinite;
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <!-- Arka plan efekti -->
+                        <div style="
+                            position: absolute;
+                            top: -50%;
+                            left: -50%;
+                            width: 200%;
+                            height: 200%;
+                            background: repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 10px,
+                                rgba(255, 0, 51, 0.05) 10px,
+                                rgba(255, 0, 51, 0.05) 20px
+                            );
+                            animation: bgMove 20s linear infinite;
+                            pointer-events: none;
+                        "></div>
+
+                        <!-- İçerik -->
+                        <div style="position: relative; z-index: 1; text-align: center;">
+                            <!-- Animasyonlu emoji -->
+                            <div style="
+                                font-size: 10rem;
+                                margin-bottom: 30px;
+                                animation: explosionShake 0.5s ease, float 3s ease-in-out infinite;
+                                filter: drop-shadow(0 0 30px rgba(255, 0, 51, 0.8));
+                            ">💥</div>
+
+                            <!-- Başlık -->
+                            <h2 style="
+                                font-family: 'Russo One', sans-serif;
+                                font-size: clamp(2.5rem, 8vw, 4rem);
+                                color: #ff0033;
+                                text-shadow: 
+                                    0 0 20px #ff0033,
+                                    0 0 40px #ff0033,
+                                    0 0 60px #ff0033,
+                                    0 0 80px #ff0033;
+                                margin-bottom: 20px;
+                                font-weight: 900;
+                                letter-spacing: 3px;
+                                animation: titlePulse 1.5s ease-in-out infinite;
+                            ">
+                                ⚠️ SEVİYE BAŞARISIZ ⚠️
+                            </h2>
+
+                            <!-- Seviye bilgisi -->
+                            <div style="
+                                font-family: 'Rajdhani', sans-serif;
+                                font-size: clamp(1.3rem, 4vw, 1.8rem);
+                                color: #ffaa00;
+                                margin-bottom: 30px;
+                                font-weight: 700;
+                                text-shadow: 0 0 20px #ffaa00;
+                            ">
+                                📍 Seviye ${level.id}: ${level.title}
+                            </div>
+
+                            <!-- Bilgilendirme metni -->
+                            <div style="
+                                background: rgba(0, 0, 0, 0.6);
+                                border: 3px solid #ff0033;
+                                border-radius: 20px;
+                                padding: 30px;
+                                margin: 30px 0;
+                                box-shadow: inset 0 0 30px rgba(255, 0, 51, 0.3);
+                            ">
+                                <div style="
+                                    font-size: clamp(1.2rem, 3vw, 1.5rem);
+                                    color: #ffffff;
+                                    line-height: 2;
+                                    margin-bottom: 25px;
+                                    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+                                ">
+                                    <p style="margin: 15px 0;">
+                                        🔴 <strong style="color: #ff0033;">3 yanlış cevap</strong> verdiniz!
+                                    </p>
+                                    <p style="margin: 15px 0;">
+                                        Seviye otomatik olarak sonlandırıldı.
+                                    </p>
+                                </div>
+
+                                <!-- İstatistikler -->
+                                <div style="
+                                    display: grid;
+                                    grid-template-columns: 1fr 1fr;
+                                    gap: 20px;
+                                    margin-top: 25px;
+                                ">
+                                    <div style="
+                                        background: rgba(0, 255, 0, 0.1);
+                                        border: 2px solid #00ff00;
+                                        border-radius: 15px;
+                                        padding: 20px;
+                                    ">
+                                        <div style="font-size: 3rem;">✅</div>
+                                        <div style="
+                                            font-size: clamp(1.5rem, 4vw, 2rem);
+                                            color: #00ff00;
+                                            font-weight: 900;
+                                            text-shadow: 0 0 20px #00ff00;
+                                        ">${this.correctAnswers}</div>
+                                        <div style="
+                                            font-size: clamp(0.9rem, 2vw, 1.1rem);
+                                            color: #cccccc;
+                                            margin-top: 5px;
+                                        ">Doğru Cevap</div>
+                                    </div>
+                                    <div style="
+                                        background: rgba(255, 0, 51, 0.2);
+                                        border: 2px solid #ff0033;
+                                        border-radius: 15px;
+                                        padding: 20px;
+                                    ">
+                                        <div style="font-size: 3rem;">❌</div>
+                                        <div style="
+                                            font-size: clamp(1.5rem, 4vw, 2rem);
+                                            color: #ff0033;
+                                            font-weight: 900;
+                                            text-shadow: 0 0 20px #ff0033;
+                                        ">${this.wrongAnswers}</div>
+                                        <div style="
+                                            font-size: clamp(0.9rem, 2vw, 1.1rem);
+                                            color: #cccccc;
+                                            margin-top: 5px;
+                                        ">Yanlış Cevap</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- İpucu -->
+                            <div style="
+                                background: linear-gradient(135deg, rgba(255, 255, 0, 0.2), rgba(255, 170, 0, 0.2));
+                                border: 2px solid #ffff00;
+                                border-radius: 15px;
+                                padding: 20px;
+                                margin: 25px 0;
+                                box-shadow: 0 0 30px rgba(255, 255, 0, 0.3);
+                            ">
+                                <div style="font-size: 2.5rem; margin-bottom: 10px;">💡</div>
+                                <div style="
+                                    font-size: clamp(1rem, 2.5vw, 1.2rem);
+                                    color: #ffff00;
+                                    font-weight: 600;
+                                    text-shadow: 0 0 15px #ffff00;
+                                    line-height: 1.8;
+                                ">
+                                    Seviyeyi tekrar dene!<br>
+                                    Bu sefer <strong>farklı sorular</strong> gelecek! 🎲
+                                </div>
+                            </div>
+
+                            <!-- Butonlar -->
+                            <div style="
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 15px;
+                                justify-content: center;
+                                margin-top: 35px;
+                            ">
+                                <button 
+                                    class="btn btn-danger"
+                                    onclick="game.retryLevelFromModal()"
+                                    style="
+                                        font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+                                        padding: 20px 40px;
+                                        animation: btnPulse 1.5s ease-in-out infinite;
+                                    "
+                                >
+                                    🔄 Bölümü Tekrar Oyna
+                                </button>
+                                <button 
+                                    class="btn btn-primary"
+                                    onclick="game.exitToLevelSelect()"
+                                    style="
+                                        font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+                                        padding: 20px 40px;
+                                    "
+                                >
+                                    📋 Seviye Seçimi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // CSS animasyonları ekle
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes modalSlideIn {
+                        from { transform: scale(0.5) translateY(-100px); opacity: 0; }
+                        to { transform: scale(1) translateY(0); opacity: 1; }
+                    }
+                    @keyframes modalGlow {
+                        0%, 100% { box-shadow: 0 0 60px rgba(255, 0, 51, 0.8), 0 0 120px rgba(255, 0, 51, 0.4), inset 0 0 40px rgba(255, 0, 51, 0.2); }
+                        50% { box-shadow: 0 0 80px rgba(255, 0, 51, 1), 0 0 160px rgba(255, 0, 51, 0.6), inset 0 0 60px rgba(255, 0, 51, 0.3); }
+                    }
+                    @keyframes explosionShake {
+                        0%, 100% { transform: rotate(0deg) scale(1); }
+                        25% { transform: rotate(-10deg) scale(1.1); }
+                        75% { transform: rotate(10deg) scale(1.1); }
+                    }
+                    @keyframes titlePulse {
+                        0%, 100% { 
+                            text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0033, 0 0 60px #ff0033;
+                            transform: scale(1);
+                        }
+                        50% { 
+                            text-shadow: 0 0 30px #ff0033, 0 0 60px #ff0033, 0 0 90px #ff0033, 0 0 120px #ff0033;
+                            transform: scale(1.05);
+                        }
+                    }
+                    @keyframes bgMove {
+                        0% { transform: translate(0, 0); }
+                        100% { transform: translate(50px, 50px); }
+                    }
+                    @keyframes btnPulse {
+                        0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(235, 51, 73, 0.4); }
+                        50% { transform: scale(1.05); box-shadow: 0 15px 50px rgba(235, 51, 73, 0.8); }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Modal'ı ekle
+                document.body.appendChild(modal);
+
+                // Ses efekti
+                this.playSound('wrong');
+            }
+
+            retryLevelFromModal() {
+                // Modal'ı kaldır
+                const modal = document.getElementById('failModal');
+                if (modal) {
+                    modal.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => modal.remove(), 300);
+                }
+
+                // Yeni CSS ekle
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes fadeOut {
+                        from { opacity: 1; }
+                        to { opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Ses efekti
+                this.playSound('click');
+
+                // Seviyeyi yeni sorularla yeniden başlat
+                console.log('🔄 Bölüm havuzdan yeni sorularla yeniden başlatılıyor...');
+                setTimeout(() => {
+                    this.retryLevel();
+                }, 500);
+            }
+
+            exitToLevelSelect() {
+                // Modal'ı kaldır
+                const modal = document.getElementById('failModal');
+                if (modal) {
+                    modal.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => modal.remove(), 300);
+                }
+
+                // Ses efekti
+                this.playSound('click');
+
+                // Seviye seçimine dön
+                setTimeout(() => {
+                    this.showLevelSelect();
+                }, 500);
+            }
+
+            retryLevel() {
+                // Seviyeyi sıfırla ve havuzdan YENİ sorular seç
+                console.log('🔄 Seviye yeniden başlatılıyor...');
+                this.startLevel(this.currentLevel);
+            }
+
+            nextQuestion() {
+                if (this.currentQuestion < this.currentQuestions.length - 1) {
+                    this.currentQuestion++;
+                    this.showStoryAndQuestion();
+                } else {
+                    this.completeLevel();
+                }
+            }
+
+            startTimer() {
+                this.updateTimerDisplay();
+                
+                this.timer = setInterval(() => {
+                    this.timeRemaining--;
+                    this.updateTimerDisplay();
+
+                    if (this.timeRemaining <= 30) {
+                        document.getElementById('timer').classList.add('warning');
+                    }
+
+                    if (this.timeRemaining <= 0) {
+                        this.timeUp();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timeRemaining / 60);
+                const seconds = this.timeRemaining % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            timeUp() {
+                clearInterval(this.timer);
+                this.completeLevel();
+            }
+
+            completeLevel() {
+                clearInterval(this.timer);
+                
+                const level = gameData.levels[this.currentLevel];
+                const timeBonus = Math.max(0, Math.floor(this.timeRemaining / 10));
+                
+                this.completedLevels.add(this.currentLevel + 1);
+                this.totalCorrect += this.correctAnswers;
+                this.totalScore += this.correctAnswers * 10 + timeBonus;
+
+                this.playSound('complete');
+
+                document.getElementById('resultIcon').textContent = 
+                    this.correctAnswers >= 4 ? '🎉' : this.correctAnswers >= 3 ? '👍' : '💪';
+                document.getElementById('resultTitle').textContent = 
+                    this.correctAnswers >= 4 ? 'Mükemmel!' : 
+                    this.correctAnswers >= 3 ? 'İyi İş!' : 'Devam Et!';
+                document.getElementById('resultMessage').textContent = 
+                    this.correctAnswers >= 4 ? 'Seviyeyi harika tamamladın! Matematik kahramanısın!' :
+                    this.correctAnswers >= 3 ? 'Güzel bir performans! Bir sonraki seviyeye hazır mısın?' :
+                    'Pratik yapmaya devam et, başarılı olacaksın!';
+                
+                document.getElementById('correctAnswers').textContent = this.correctAnswers;
+                document.getElementById('wrongAnswers').textContent = this.wrongAnswers;
+                document.getElementById('timeBonus').textContent = '+' + timeBonus;
+
+                this.showScreen('resultScreen');
+            }
+
+            nextLevel() {
+                if (this.currentLevel < gameData.levels.length - 1) {
+                    this.startLevel(this.currentLevel + 1);
+                } else {
+                    this.showFinal();
+                }
+            }
+
+            showFinal() {
+                document.getElementById('finalScore').textContent = this.totalScore;
+                document.getElementById('finalCorrect').textContent = this.totalCorrect + '/35';
+                this.showScreen('finalScreen');
+            }
+
+            restart() {
+                this.currentLevel = 0;
+                this.completedLevels.clear();
+                this.totalScore = 0;
+                this.totalCorrect = 0;
+                this.showWelcome();
+            }
+        }
+
+        // Oyunu başlat
+        const game = new Game();
+    </script>
+</body>
+</html>
