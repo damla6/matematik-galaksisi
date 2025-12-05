@@ -100,6 +100,10 @@
                     <div class="story-text" id="storyText">Hazırlanıyor...</div>
                 </div>
 
+                <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
+                    <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
+                </div>
+
                 <div class="question-card" id="questionCard">
                     <div class="question-number" id="questionNumber">Soru 1/5</div>
                     <div class="question-text" id="questionText">Soru yükleniyor...</div>
@@ -115,7 +119,9 @@
                     <div class="result-icon" id="resultIcon">🎉</div>
                     <h2 class="result-title" id="resultTitle">Tebrikler!</h2>
                     <p id="resultMessage" class="result-message"></p>
-                    
+
+                    <div class="result-badge" id="resultBadge" aria-live="polite"></div>
+
                     <div class="result-stats">
                         <div class="stat-item">
                             <div class="stat-label">Doğru Cevap</div>
@@ -664,6 +670,8 @@
                 this.isMobileViewport = window.matchMedia('(max-width: 480px)').matches;
                 this.starCount = this.isMobileViewport ? 50 : 100;
                 this.particleBaseCount = this.isMobileViewport ? 8 : 15;
+                this.hintAvailable = false;
+                this.hintUsedThisQuestion = false;
 
                 this.initStars();
                 this.initMusicControl();
@@ -1237,16 +1245,21 @@
                 gameData.levels.forEach((level, index) => {
                     const card = document.createElement('div');
                     card.className = 'level-card';
-                    
+
                     const isLocked = index > 0 && !this.completedLevels.has(index);
                     if (isLocked) {
                         card.classList.add('locked');
                     }
 
-                    const status = this.completedLevels.has(index + 1) ? '✅' : 
+                    const badgeIcon = level.badge ? this.getBadgeIcon(level.badge) : '';
+                    const status = this.completedLevels.has(index + 1) ? '✅' :
                                    isLocked ? '🔒' : '⭐';
 
                     card.innerHTML = `
+                        <div class="level-meta">
+                            ${badgeIcon ? `<span class="level-badge-mini" title="${level.badge}">${badgeIcon}</span>` : ''}
+                            ${this.completedLevels.has(index + 1) ? '<span class="level-complete-tick" title="Tamamlandı">✔</span>' : ''}
+                        </div>
                         <div class="level-status">${status}</div>
                         <div class="level-number">${level.id}</div>
                         <div class="level-title">${level.title}</div>
@@ -1278,7 +1291,10 @@
                 this.correctAnswers = 0;
                 this.wrongAnswers = 0;
                 this.levelStartTime = Date.now();
-                
+                this.hintAvailable = false;
+                this.hintUsedThisQuestion = false;
+                this.updateHintBar(false);
+
                 const level = gameData.levels[levelIndex];
                 this.timeRemaining = level.time;
 
@@ -1380,17 +1396,45 @@
                 const titleElement = document.getElementById('currentLevelTitle');
                 titleElement.textContent = `Seviye ${level.id}: ${level.title}`;
                 titleElement.setAttribute('data-icon', icon);
-                
+
                 document.getElementById('currentLevelDesc').textContent = level.description;
+            }
+
+            getBadgeIcon(badge) {
+                const map = {
+                    'Hızlı': '⚡',
+                    'Kesin Nişancı': '🎯',
+                    'Dayanıklı': '⭐'
+                };
+                return map[badge] || '⭐';
+            }
+
+            calculateBadge(level) {
+                const timeRatio = level.time > 0 ? this.timeRemaining / level.time : 0;
+
+                if (this.wrongAnswers === 0) {
+                    return 'Kesin Nişancı';
+                }
+                if (timeRatio > 0.4) {
+                    return 'Hızlı';
+                }
+                if (timeRatio < 0.2) {
+                    return 'Dayanıklı';
+                }
+                return null;
             }
 
             showStoryAndQuestion() {
                 const level = gameData.levels[this.currentLevel];
                 const story = level.stories[this.currentQuestion];
                 const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
+                this.hintUsedThisQuestion = false;
+                this.updateHintBar();
 
                 // Soru kartını gizle
-                document.getElementById('questionCard').style.display = 'none';
+                const questionCard = document.getElementById('questionCard');
+                questionCard.style.display = 'none';
+                questionCard.classList.remove('shake');
 
                 // Hikaye göster
                 document.getElementById('storyCharacter').textContent = story.character;
@@ -1629,6 +1673,7 @@
             checkAnswer(answerIndex) {
                 const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
                 const buttons = document.querySelectorAll('.answer-btn');
+                const questionCard = document.getElementById('questionCard');
 
                 buttons.forEach(btn => btn.disabled = true);
 
@@ -1646,12 +1691,19 @@
                     this.wrongAnswers++;
                     this.playSound('wrong');
 
+                    // 2 YANLIŞ - Yumuşak uyarı ve ipucu
+                    if (this.wrongAnswers === 2) {
+                        this.hintAvailable = true;
+                        this.triggerShake(questionCard);
+                        this.updateHintBar(true);
+                    }
+
                     // 3 YANLIŞ KONTROLÜ
                     if (this.wrongAnswers >= 3) {
                         console.log('❌ 3 yanlış yapıldı! Seviye başarısız.');
                         setTimeout(() => {
-                            this.levelFailed();
-                        }, 2000);
+                            this.showGentleFailure();
+                        }, 1400);
                     } else {
                         setTimeout(() => {
                             this.nextQuestion();
@@ -1660,80 +1712,61 @@
                 }
             }
 
-            levelFailed() {
+            triggerShake(target) {
+                if (!target) return;
+                target.classList.add('shake');
+                setTimeout(() => target.classList.remove('shake'), 800);
+            }
+
+            updateHintBar(forceShow = false) {
+                const hintBar = document.getElementById('hintBar');
+                const shouldShow = (this.hintAvailable || forceShow) && this.wrongAnswers >= 2;
+                hintBar.hidden = !shouldShow;
+                const hintButton = hintBar.querySelector('.hint-btn');
+                if (hintButton) {
+                    hintButton.disabled = this.hintUsedThisQuestion;
+                }
+            }
+
+            requestHint() {
+                if (!this.hintAvailable || this.hintUsedThisQuestion) return;
+
+                const question = this.currentQuestions[this.currentQuestion];
+                const buttons = Array.from(document.querySelectorAll('.answer-btn'));
+                const candidates = buttons.filter((_, idx) => idx !== question.correct && !buttons[idx].disabled);
+
+                if (candidates.length === 0) return;
+
+                const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+                chosen.disabled = true;
+                chosen.classList.add('disabled-hint');
+                this.hintUsedThisQuestion = true;
+                this.updateHintBar();
+            }
+
+            showGentleFailure() {
                 this.stopActiveLoops();
 
-                // Modal oluştur
                 const modal = document.createElement('div');
                 modal.id = 'failModal';
-                modal.className = 'failure-modal';
+                modal.className = 'failure-modal soft';
 
                 const level = gameData.levels[this.currentLevel];
 
                 modal.innerHTML = `
                     <div class="failure-modal-overlay"></div>
-                    <div class="failure-modal-content" role="dialog" aria-modal="true" aria-labelledby="failureTitle" aria-describedby="failureDescription">
-                        <div class="failure-modal-bg"></div>
-                        <div class="failure-modal-body">
-                            <div class="failure-emoji">💥</div>
-                            <h2 class="failure-title" id="failureTitle">⚠️ SEVİYE BAŞARISIZ ⚠️</h2>
-                            <div class="failure-level-info" id="failureDescription">📍 Seviye ${level.id}: ${level.title}</div>
-
-                            <div class="failure-info-box">
-                                <div class="failure-info-title">Sebep:</div>
-                                <div class="failure-info-text">
-                                    <p class="failure-info-paragraph">
-                                        🔴 <strong class="failure-highlight">3 yanlış cevap</strong> verdiniz!
-                                    </p>
-                                    <p class="failure-info-paragraph">
-                                        Seviye otomatik olarak sonlandırıldı.
-                                    </p>
-                                </div>
-
-                                <div class="failure-stats">
-                                    <div class="failure-stat success">
-                                        <div class="failure-stat-icon">✅</div>
-                                        <div class="failure-stat-value">${this.correctAnswers}</div>
-                                        <div class="failure-stat-label">Doğru Cevap</div>
-                                    </div>
-                                    <div class="failure-stat danger">
-                                        <div class="failure-stat-icon">❌</div>
-                                        <div class="failure-stat-value">${this.wrongAnswers}</div>
-                                        <div class="failure-stat-label">Yanlış Cevap</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="failure-hint">
-                                <div class="failure-hint-icon">💡</div>
-                                <div class="failure-hint-text">
-                                    Seviyeyi tekrar dene!<br>
-                                    Bu sefer <strong>farklı sorular</strong> gelecek! 🎲
-                                </div>
-                            </div>
-
-                            <div class="failure-actions">
-                                <button
-                                    class="btn btn-danger failure-action-btn failure-retry-btn"
-                                    onclick="game.retryLevelFromModal()"
-                                >
-                                    🔄 Bölümü Tekrar Oyna
-                                </button>
-                                <button
-                                    class="btn btn-primary failure-action-btn"
-                                    onclick="game.exitToLevelSelect()"
-                                >
-                                    📋 Seviye Seçimi
-                                </button>
-                            </div>
+                    <div class="gentle-failure" role="dialog" aria-modal="true" aria-labelledby="failureTitle" aria-describedby="failureDescription">
+                        <div class="gentle-icon">🤗</div>
+                        <h2 class="gentle-title" id="failureTitle">Tekrar Deneyelim!</h2>
+                        <p class="gentle-text" id="failureDescription">${level.title} macerası bitmedi! Daha sakin bir denemeyle başarabilirsin.</p>
+                        <div class="gentle-actions">
+                            <button class="btn btn-success" onclick="game.retryLevelWithHint()">💡 İpuçlu Yeniden Dene</button>
+                            <button class="btn btn-primary" onclick="game.exitToLevelSelect()">📋 Seviye Seçimi</button>
                         </div>
                     </div>
                 `;
 
-                // Modal'ı ekle
                 document.body.appendChild(modal);
-
-                // Ses efekti
                 this.playSound('wrong');
             }
 
@@ -1753,6 +1786,18 @@
                 setTimeout(() => {
                     this.retryLevel();
                 }, 500);
+            }
+
+            retryLevelWithHint() {
+                const modal = document.getElementById('failModal');
+                if (modal) {
+                    modal.style.animation = 'fadeOut 0.25s ease';
+                    setTimeout(() => modal.remove(), 250);
+                }
+
+                this.playSound('click');
+                this.hintAvailable = true;
+                setTimeout(() => this.retryLevel(), 300);
             }
 
             exitToLevelSelect() {
@@ -1822,17 +1867,19 @@
 
             completeLevel() {
                 clearInterval(this.timer);
-                
+
                 const level = gameData.levels[this.currentLevel];
                 const timeBonus = Math.max(0, Math.floor(this.timeRemaining / 10));
-                
+                const badge = this.calculateBadge(level);
+
                 this.completedLevels.add(this.currentLevel + 1);
                 this.totalCorrect += this.correctAnswers;
                 this.totalScore += this.correctAnswers * 10 + timeBonus;
+                level.badge = badge;
 
                 this.playSound('complete');
 
-                document.getElementById('resultIcon').textContent = 
+                document.getElementById('resultIcon').textContent =
                     this.correctAnswers >= 4 ? '🎉' : this.correctAnswers >= 3 ? '👍' : '💪';
                 document.getElementById('resultTitle').textContent = 
                     this.correctAnswers >= 4 ? 'Mükemmel!' : 
@@ -1845,6 +1892,15 @@
                 document.getElementById('correctAnswers').textContent = this.correctAnswers;
                 document.getElementById('wrongAnswers').textContent = this.wrongAnswers;
                 document.getElementById('timeBonus').textContent = '+' + timeBonus;
+
+                const resultBadge = document.getElementById('resultBadge');
+                if (badge) {
+                    resultBadge.textContent = `${this.getBadgeIcon(badge)} ${badge}`;
+                    resultBadge.classList.remove('hidden');
+                } else {
+                    resultBadge.textContent = '';
+                    resultBadge.classList.add('hidden');
+                }
 
                 this.showScreen('resultScreen');
             }
