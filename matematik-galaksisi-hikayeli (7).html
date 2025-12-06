@@ -121,11 +121,17 @@
                     <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
                 </div>
 
+                <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
+                    <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
+                </div>
+
                 <div class="question-card" id="questionCard">
                     <div class="question-number" id="questionNumber">Soru 1/5</div>
                     <div class="question-text" id="questionText">Soru yükleniyor...</div>
                     <div class="answers-grid" id="answersGrid"></div>
                 </div>
+
+                <div class="explanation-box hidden" id="explanationBox" aria-live="polite"></div>
             </div>
         </div>
 
@@ -152,6 +158,11 @@
                             <div class="stat-label">Süre Bonusu</div>
                             <div class="stat-value" id="timeBonus">+0</div>
                         </div>
+                    </div>
+
+                    <div class="learning-summary hidden" id="learningSummary">
+                        <h3>Bu seviyede neleri pekiştirdin?</h3>
+                        <ul id="learningSummaryList"></ul>
                     </div>
 
                     <div class="result-actions">
@@ -663,6 +674,317 @@
             ]
         };
 
+        const questionMeta = {
+            1: [
+                {
+                    tags: ['kadran', 'koordinat sistemi'],
+                    explanation: {
+                        correct: 'Birinci kadranda hem x hem y değeri pozitiftir; iki işaretin de + olması doğru noktayı gösterir.',
+                        wrong: 'Kadran belirlerken x ve y işaretlerine birlikte bak; pozitif/pozitif kombinasyonu seni doğru yere götürür.'
+                    }
+                },
+                {
+                    tags: ['kadran', 'negatif y'],
+                    explanation: {
+                        correct: 'Dördüncü kadranda x pozitiftir, y negatiftir; oklar aşağı doğruya yönelir.',
+                        wrong: 'Bir dahaki denemede dördüncü kadran için x’in +, y’nin - olması gerektiğini hatırla.'
+                    }
+                },
+                {
+                    tags: ['kadran', 'negatif'],
+                    explanation: {
+                        correct: 'Üçüncü kadranda her iki değer de negatiftir; (-x, -y) noktaları burada yaşar.',
+                        wrong: 'Üçüncü kadran için hem x hem y işaretlerinin - olması gerektiğini gözden kaçırdın.'
+                    }
+                },
+                {
+                    tags: ['kesirli', 'kadran'],
+                    explanation: {
+                        correct: 'Kesirli koordinatlar da aynı kuralı izler: x ve y’nin işaretine göre kadran belirlenir.',
+                        wrong: 'İşaret kontrolü kesirli değerlerde de geçerli; basamaklara değil, +/− işaretine odaklan.'
+                    }
+                },
+                {
+                    tags: ['y ekseni', 'orijin'],
+                    explanation: {
+                        correct: 'Y ekseni üzerindeki noktaların x değeri 0’dır; (0, y) formunu aradın ve buldun.',
+                        wrong: 'Eksen sorularında hangi değişkenin 0 olduğuna bak; y ekseninde x=0 olmalı.'
+                    }
+                }
+            ],
+            2: [
+                {
+                    tags: ['eğim', 'oran'],
+                    explanation: {
+                        correct: 'Eğim, y değişiminin x değişimine oranıdır; (y2−y1)/(x2−x1) ile pozitif artışı okudun.',
+                        wrong: 'İki nokta arasındaki artış/azalış oranını bölmeyi unutma; y farkını x farkına bölmek yeterli.'
+                    }
+                },
+                {
+                    tags: ['eğim', 'negatif eğim'],
+                    explanation: {
+                        correct: 'Yukarıdan aşağıya inen doğrularda y azalır; oran negatif olur ve bu seçimi yaptın.',
+                        wrong: 'Azalan doğrularda y farkı negatif çıkar; payın işaretini kontrol etmek sonuca götürür.'
+                    }
+                },
+                {
+                    tags: ['eğim', 'karışık işaret'],
+                    explanation: {
+                        correct: 'İşaretler karışık olsa da formül aynı; y farkını x farkına böldüğünde eğimi yakaladın.',
+                        wrong: 'Farkların işaretini ayrı ayrı düşün; oranı hesaplarken pay ve payda işaretleri sonucu belirler.'
+                    }
+                },
+                {
+                    tags: ['eğim', 'kesir'],
+                    explanation: {
+                        correct: 'Farklar küçük olsa da eğim yine bölme ile bulunur; kesirli değeri doğru okudun.',
+                        wrong: 'Kesirli eğimlerde de aynı formül geçerli; pay/payda oranını sadeleştirerek ilerle.'
+                    }
+                },
+                {
+                    tags: ['tanımsız', 'dikey doğru'],
+                    explanation: {
+                        correct: 'x farkı 0 olduğunda dikey doğru oluşur ve eğim tanımsızdır; payda olmadığı için sonuç olmaz.',
+                        wrong: 'Dikey doğrularda x farkı 0 olduğu için bölme yapılamaz; bu durumda eğim tanımsızdır.'
+                    }
+                }
+            ],
+            3: [
+                {
+                    tags: ['açı', 'eğim'],
+                    explanation: {
+                        correct: '45° için tan θ = 1’dir; eğim 1 olduğunda doğru köşegen olur.',
+                        wrong: '45° açıları için eğim 1’e eşittir; tan 45° bilgisini hatırlamak işini kolaylaştırır.'
+                    }
+                },
+                {
+                    tags: ['yatay doğru', 'açı'],
+                    explanation: {
+                        correct: '0°’lik yatay doğrunun eğimi 0’dır; y değişimi olmadığından oran sıfır olur.',
+                        wrong: 'Yatay doğruda y değişimi yok; tan 0° = 0 bilgisini kullanarak eğimin sıfır olduğunu hatırla.'
+                    }
+                },
+                {
+                    tags: ['trigonometri', 'kesirli eğim'],
+                    explanation: {
+                        correct: '30°’nin tan değeri √3/3’tür; hafif eğimli yolu doğru yorumladın.',
+                        wrong: '30° açı için tan değeri küçük ve pozitif; yaklaşık 0.577 değerini hatırlamak yardımcı olur.'
+                    }
+                },
+                {
+                    tags: ['trigonometri', 'dik eğim'],
+                    explanation: {
+                        correct: '60° tan değeri √3’tür; eğimin büyümesi doğrunun dikleştiğini gösterir.',
+                        wrong: '60°’de tan değeri 1’den büyüktür; dikleşen doğrular için büyük eğim bekle.'
+                    }
+                },
+                {
+                    tags: ['açı', 'negatif eğim'],
+                    explanation: {
+                        correct: '-45° için tan değerinin -1 olması, doğruyun aşağı doğru gittiğini anlatır.',
+                        wrong: 'Negatif açılarda eğim de negatiftir; -45° için tan değeri -1’dir, işaret kontrolü yeterli.'
+                    }
+                }
+            ],
+            4: [
+                {
+                    tags: ['doğru denklemi', 'y ekseni'],
+                    explanation: {
+                        correct: 'y = mx + b denkleminde (0,b) noktası doğrunun y eksenini kestiği yerdir; b doğrudan okunur.',
+                        wrong: 'Eksen kesişiminde x=0 olur; bu durumda y değeri b’ye eşittir, bu ipucunu kullanabilirsin.'
+                    }
+                },
+                {
+                    tags: ['eğim', 'b değeri'],
+                    explanation: {
+                        correct: 'Bilinen nokta ve eğimle b bulunur: y = mx + b denkleminde yerine koyup b’yi çözdün.',
+                        wrong: 'Bir nokta ve eğim verildiğinde x ve y’yi yerine koy, b’yi yalnız bırak; denklem bu şekilde tamamlanır.'
+                    }
+                },
+                {
+                    tags: ['negatif eğim', 'doğru denklemi'],
+                    explanation: {
+                        correct: 'Negatif eğim olsa da yöntem aynı; verilen nokta üzerinden b değerini izole ettin.',
+                        wrong: 'Eğim negatif olsa bile denklem çözüm yolu değişmez; x ve y’yi yerine yazıp b’yi bulabilirsin.'
+                    }
+                },
+                {
+                    tags: ['kesirli eğim', 'b değeri'],
+                    explanation: {
+                        correct: 'Kesirli eğimde de b’yi bulmak için x ve y’yi yerine koyup toplama-çıkarma yaptın.',
+                        wrong: 'Kesirli katsayılar göz korkutmasın; x ve y’yi yerine yaz, adım adım b’yi yalnız bırak.'
+                    }
+                },
+                {
+                    tags: ['doğru denklemi', 'işlemsel çözüm'],
+                    explanation: {
+                        correct: 'Verilen nokta ve eğimle b’yi çözdün; y = mx + b formatı seni doğru sonuca götürdü.',
+                        wrong: 'x ve y değerlerini denklemde kullanıp b’yi bulmak, eğim sorularında hızlı bir yöntemdir.'
+                    }
+                }
+            ],
+            5: [
+                {
+                    tags: ['paralel', 'eğim'],
+                    explanation: {
+                        correct: 'Paralel doğruların eğimleri aynıdır; b farklıysa doğrular hiç kesişmez.',
+                        wrong: 'Paralellik için eğimlerin eşit olmasına bak; b farklıysa doğrular uzak durur.'
+                    }
+                },
+                {
+                    tags: ['kesişim', 'eğim'],
+                    explanation: {
+                        correct: 'Eğimler farklıysa doğrular bir noktada kesişir; bunu fark ettin.',
+                        wrong: 'Farklı eğimler doğruları mutlaka kesiştirir; eğim karşılaştırması yeterli bir ipucudur.'
+                    }
+                },
+                {
+                    tags: ['çakışık', 'doğru denklemi'],
+                    explanation: {
+                        correct: 'Eğim ve b aynıysa doğrular üst üste biner; tüm noktaları paylaşırlar.',
+                        wrong: 'Doğruların hem eğimi hem b değeri aynıysa aslında tek bir doğruyu anlatırlar.'
+                    }
+                },
+                {
+                    tags: ['paralel', 'sadeleştirme'],
+                    explanation: {
+                        correct: 'Denklemi sadeleştirince eğimlerin eşit olduğunu gördün; b’ler farklıysa paralellik korunur.',
+                        wrong: 'Denklemleri sadeleştirip eğimleri karşılaştır; aynı eğim + farklı b paralelliği gösterir.'
+                    }
+                },
+                {
+                    tags: ['çakışık', 'eşdeğer denklem'],
+                    explanation: {
+                        correct: 'Her iki denklem de aynı formu verdi; bu yüzden doğrular çakışık.',
+                        wrong: 'Denklemler aynı şekle geliyorsa aslında tek doğruyu anlatırlar; bu çakışma anlamına gelir.'
+                    }
+                }
+            ],
+            6: [
+                {
+                    tags: ['dik', 'eğim'],
+                    explanation: {
+                        correct: 'Dik doğruların eğimleri çarpıldığında -1 çıkar; 2 ile -1/2 çarpımı tam da bunu verir.',
+                        wrong: 'Dik doğrular için m₁ × m₂ = -1 kuralını kullan; 2’nin tersi -1/2 olmalıdır.'
+                    }
+                },
+                {
+                    tags: ['dik', 'negatif eğim'],
+                    explanation: {
+                        correct: 'Negatif eğimin dik karşılığı işaret değiştirip ters çevrilir; -4 → 1/4 ilişkisini gördün.',
+                        wrong: 'Diklikte eğimi ters çevirip işaretini değiştir; -4 için karşılık 1/4 olmalı.'
+                    }
+                },
+                {
+                    tags: ['dik', 'kesirli'],
+                    explanation: {
+                        correct: 'Kesirli eğimde de çarpım -1 kuralı geçerli; 3/4’ün dik partneri -4/3’tür.',
+                        wrong: 'Kesirli eğimleri ters çevirip işaret değiştir; 3/4 → -4/3 dönüşümünü uygulayabilirsin.'
+                    }
+                },
+                {
+                    tags: ['yatay doğru', 'tanımsız'],
+                    explanation: {
+                        correct: 'Yatay doğruya dik olan doğru düşeydir; x sabittir ve eğim tanımsızdır.',
+                        wrong: 'Yatay doğruların dikleri düşey olur; x sabit olduğunda eğim tanımsızlaşır.'
+                    }
+                },
+                {
+                    tags: ['dik', 'koordinat sistemi'],
+                    explanation: {
+                        correct: 'Düşey doğruya dik olan doğrular yataydır; y = k formu ile x eksenine paralel gider.',
+                        wrong: 'x = k doğruları düşeydir; bunlara dik olan doğrular y = k şeklinde yatay uzanır.'
+                    }
+                }
+            ],
+            7: [
+                {
+                    tags: ['grafik', 'oran'],
+                    explanation: {
+                        correct: 'y = 50x, her saat 50 km demektir; 4 saatte 4×50 = 200 km’ye ulaştın.',
+                        wrong: 'Doğrunun eğimi hızını verir; süre ile çarparak toplam yolu bulabilirsin (50×4).'
+                    }
+                },
+                {
+                    tags: ['azalma', 'grafik'],
+                    explanation: {
+                        correct: 'Her saat 15 litre azalınca 4 saatte 60 litre gider; 120−60 = 60 litrelik sonucu yakaladın.',
+                        wrong: 'Doğrusal azalışta eğim negatif miktarı gösterir; süre ile çarpıp başlangıçtan çıkararak ilerleyebilirsin.'
+                    }
+                },
+                {
+                    tags: ['eğim', 'grafik okuma'],
+                    explanation: {
+                        correct: 'Eğim, iki nokta arasındaki değişim oranıdır; (0,0)-(5,15) için 15/5 = 3 buldun.',
+                        wrong: 'Grafikte eğim için y farkını x farkına böl; 15/5 işlemi seni doğru değere götürür.'
+                    }
+                },
+                {
+                    tags: ['karşılaştırma', 'eğim'],
+                    explanation: {
+                        correct: 'Eğim büyüdükçe doğru dikleşir; 5 eğimi 2’den büyüktür, bu yüzden y = 5x daha diktir.',
+                        wrong: 'Hangi doğru daha dik diye bakarken eğimleri karşılaştır; büyük eğim daha dik çizgi demektir.'
+                    }
+                },
+                {
+                    tags: ['grafik', 'doğru denklemi'],
+                    explanation: {
+                        correct: 'Başlangıç değeri 10 ve eğim 6 ise y = 6x + 10; x=3 için 6×3 + 10 = 28’i hesapladın.',
+                        wrong: 'Doğru denklemini okuyup x’i yerine koyarak y değerini bulabilirsin; 6×3’ü ekleyip 10’u unutma.'
+                    }
+                }
+            ]
+        };
+
+        const conceptBlurbs = {
+            'kadran': 'Kadranlarda işaretlerin birlikte nasıl çalıştığını gördün; koordinatları okurken +/− düzenini kullandın.',
+            'koordinat sistemi': 'Koordinat düzleminde eksenleri ve bölge ayrımlarını kullanarak konumlandırmayı pekiştirdin.',
+            'orijin': 'Orijin ve eksen kavramlarını kullanarak koordinatların özel durumlarını hatırladın.',
+            'negatif': 'Negatif değerleri okurken işaretlerin kadran seçimini nasıl değiştirdiğini gözlemledin.',
+            'negatif y': 'Negatif y değerlerinin hangi kadranda yer aldığını kontrol etmeyi tekrar ettin.',
+            'kesirli': 'Kesirli değerlerde de aynı kural ve oranları uygulayarak sonuçları yorumladın.',
+            'y ekseni': 'x=0 olduğunda noktaların y ekseni üzerinde kaldığını hatırladın.',
+            'eğim': 'İki nokta arasındaki değişim oranını (eğim) hesaplayarak doğruların yönünü okudun.',
+            'oran': 'Oran kurmayı kullanarak hız, eğim ve değişim miktarlarını ilişkilendirdin.',
+            'negatif eğim': 'Azalan doğrularda eğimin negatif olduğunu gözlemledin.',
+            'karışık işaret': 'Farklı işaretlerle çalışırken formülü koruyup işaretleri dikkatle yönetmeyi denedin.',
+            'tanımsız': 'Dikey doğrularda eğimin tanımsız olduğunu fark ederek özel durumları pekiştirdin.',
+            'dikey doğru': 'x farkının 0 olduğu doğrularda eğimin tanımsız kaldığını hatırladın.',
+            'açı': 'Açı ve eğim ilişkisini tan ve özel açılarla bağdaştırdın.',
+            'yatay doğru': 'Yatay doğrularda eğimin 0 olduğu bilgisini kullandın.',
+            'trigonometri': 'Tan değerleriyle eğimleri ilişkilendirerek açıları daha iyi yorumladın.',
+            'kesirli eğim': 'Kesirli eğimlerde oranı sadeleştirerek yorum yapmayı denedin.',
+            'doğru denklemi': 'y = mx + b formunu kullanarak doğruları tanımlayıp değer hesapladın.',
+            'b değeri': 'b katsayısının y eksenini kestiği noktayı verdiğini hatırladın.',
+            'paralel': 'Eğimleri karşılaştırarak doğruların paralel olup olmadığını kontrol ettin.',
+            'kesişim': 'Eğim farkıyla doğruların kesişeceğini yorumladın.',
+            'çakışık': 'Eğim ve b aynıysa doğruların aslında tek çizgi olduğunu gördün.',
+            'sadeleştirme': 'Denklemleri sadeleştirerek eğimleri ortaya çıkarmayı kullandın.',
+            'eşdeğer denklem': 'Eşdeğer denklemlerin aynı doğruyu verdiğini fark ettin.',
+            'dik': 'm₁ × m₂ = -1 kuralını uygulayarak dik doğruları belirledin.',
+            'çarpım -1': 'Diklikte eğimlerin çarpımının -1 olması gerektiğini kullandın.',
+            'azalma': 'Negatif eğimli doğrularda miktarın nasıl azaldığını hesapladın.',
+            'grafik': 'Grafiklerden eğim ve değer okuyarak gerçek durumları yorumladın.',
+            'grafik okuma': 'Grafik üzerindeki iki noktadan eğim hesaplayıp grafiği yorumlamayı kullandın.',
+            'karşılaştırma': 'Eğimleri karşılaştırarak hangi doğrunun daha dik olduğunu seçtin.'
+        };
+
+        function applyMetadataToBaseQuestions() {
+            gameData.levels.forEach(level => {
+                const metaList = questionMeta[level.id] || [];
+                level.questions.forEach((question, index) => {
+                    const meta = metaList[index] || {};
+                    question.tags = question.tags || meta.tags || [];
+                    question.explanation = question.explanation || meta.explanation || {
+                        correct: 'Doğru adımları yakaladın; aynı mantıkla ilerlemeye devam et.',
+                        wrong: 'Bir dahaki sefer kavramın temel tanımına odaklanarak işaretleri ve oranı birlikte düşünmeyi dene.'
+                    };
+                });
+            });
+        }
+
+        applyMetadataToBaseQuestions();
+
         // Oyun Motoru
         class Game {
             constructor() {
@@ -691,6 +1013,8 @@
                 this.hintUsedThisQuestion = false;
                 this.activeDialogues = [];
                 this.dialogHighlightTimers = [];
+                this.metaMap = questionMeta;
+                this.conceptBlurbs = conceptBlurbs;
 
                 this.initStars();
                 this.initMusicControl();
@@ -713,71 +1037,71 @@
 
             generateLevel1Pool() {
                 const pool = [];
-                
+
                 // Soru 1: Birinci bölge (x > 0, y > 0) - 20 varyasyon
                 for (let i = 0; i < 20; i++) {
                     const x = Math.floor(Math.random() * 8) + 1;
                     const y = Math.floor(Math.random() * 8) + 1;
                     const wrongX = -(Math.floor(Math.random() * 5) + 1);
                     const wrongY = -(Math.floor(Math.random() * 5) + 1);
-                    pool.push([{
+                    pool.push([this.withMeta(0, 0, {
                         difficulty: "Kolay",
                         text: `Pozitif bölgede basit bir nokta: Hangisi birinci bölgede (x > 0, y > 0) yer alır?`,
                         answers: [`(${x}, ${y})`, `(${wrongX}, ${y})`, `(${x}, ${wrongY})`, `(${wrongX}, ${wrongY})`],
                         correct: 0
-                    }]);
+                    })]);
                 }
-                
+
                 // Soru 2: Dördüncü bölge (x > 0, y < 0) - 20 varyasyon
                 for (let i = 0; i < 20; i++) {
                     const x = Math.floor(Math.random() * 8) + 1;
                     const y = Math.floor(Math.random() * 8) + 1;
-                    pool[i].push({
+                    pool[i].push(this.withMeta(0, 1, {
                         difficulty: "Kolay-Orta",
                         text: `Negatif y içeren nokta: Hangisi dördüncü bölgede (x > 0, y < 0) yer alır?`,
                         answers: [`(${x}, ${y})`, `(${x}, ${-y})`, `(${-x}, ${-y})`, `(${-x}, ${y})`],
                         correct: 1
-                    });
+                    }));
                 }
-                
+
                 // Soru 3: Üçüncü bölge (x < 0, y < 0) - 20 varyasyon
                 for (let i = 0; i < 20; i++) {
                     const x = Math.floor(Math.random() * 7) + 1;
                     const y = Math.floor(Math.random() * 7) + 1;
-                    pool[i].push({
+                    pool[i].push(this.withMeta(0, 2, {
                         difficulty: "Orta",
                         text: `Hem negatif x hem negatif y: Hangisi üçüncü bölgede yer alır?`,
                         answers: [`(${x}, ${y})`, `(${-x}, ${y})`, `(${x}, ${-y})`, `(${-x}, ${-y})`],
                         correct: 3
-                    });
+                    }));
                 }
-                
+
                 // Soru 4: Kesirli koordinatlar - 20 varyasyon
                 for (let i = 0; i < 20; i++) {
                     const x1 = (Math.random() * 3 + 0.5).toFixed(1);
                     const y1 = (Math.random() * 3 + 0.5).toFixed(1);
                     const x2 = Math.floor(Math.random() * 5) + 1;
                     const y2 = Math.floor(Math.random() * 5) + 1;
-                    pool[i].push({
+                    pool[i].push(this.withMeta(0, 3, {
                         difficulty: "Orta-Zor",
                         text: `Kesirli koordinatlar: Hangisi doğru kesirli koordinattır?`,
                         answers: [`(${x1}, ${y1})`, `(${x2}, ${y2})`, `(${-x2}, ${-y2})`, `(0, ${y2})`],
                         correct: 0
-                    });
+                    }));
                 }
-                
+
                 // Soru 5: Y ekseni üzerinde - 20 varyasyon
                 for (let i = 0; i < 20; i++) {
                     const y = Math.floor(Math.random() * 7) + 1;
                     const x = Math.floor(Math.random() * 5) + 1;
-                    pool[i].push({
+                    pool[i].push(this.withMeta(0, 4, {
                         difficulty: "Zor",
                         text: `Orijin ve eksenlere göre özel nokta: Hangisi y ekseninin üzerinde yer alır?`,
                         answers: [`(${x}, 0)`, `(0, ${y})`, `(${x}, ${y})`, `(0, 0)`],
                         correct: 1
-                    });
+                    }));
                 }
-                
+
                 return pool;
             }
 
@@ -794,20 +1118,18 @@
                     const x2 = x1 + Math.floor(Math.random() * 2) + 2;
                     const y2 = y1 + (x2 - x1) * (Math.floor(Math.random() * 3) + 1);
                     const slope = (y2 - y1) / (x2 - x1);
-                    set.push({
+                    set.push(this.withMeta(1, 0, {
                         difficulty: "Kolay",
                         text: `Pozitif eğimli tam sayı noktaları: (${x1}, ${y1}) ve (${x2}, ${y2}) noktaları arasındaki eğim kaçtır?`,
                         answers: [`${Math.floor(slope) - 1}`, `${Math.floor(slope)}`, `${Math.floor(slope) + 1}`, `${Math.floor(slope) + 2}`],
                         correct: 1
-                    });
-                    
-                    // S2-5: Benzer mantıkla diğer soru tipleri...
-                    // Kısalık için basitleştirilmiş versiyonlar
-                    set.push({difficulty: "Kolay-Orta", text: "Negatif eğim sorusu...", answers: ["1", "-2", "2", "-1"], correct: 1});
-                    set.push({difficulty: "Orta", text: "Karma işaret sorusu...", answers: ["1", "2", "3", "4"], correct: 1});
-                    set.push({difficulty: "Orta-Zor", text: "Kesirli eğim sorusu...", answers: ["1/2", "2/3", "3/4", "4/5"], correct: 2});
-                    set.push({difficulty: "Zor", text: "Tanımsız eğim sorusu...", answers: ["0", "Tanımsız", "1", "∞"], correct: 1});
-                    
+                    }));
+
+                    set.push(this.withMeta(1, 1, {difficulty: "Kolay-Orta", text: "Negatif eğimli iki nokta: x artarken y azalıyor; eğim kaçtır?", answers: ["1", "-2", "2", "-1"], correct: 1}));
+                    set.push(this.withMeta(1, 2, {difficulty: "Orta", text: "Karışık işaretli noktalar: Eğim oranını bul.", answers: ["1", "2", "3", "4"], correct: 1}));
+                    set.push(this.withMeta(1, 3, {difficulty: "Orta-Zor", text: "Kesirli eğim örneği: Farkları oranla ve sadeleştir.", answers: ["1/2", "2/3", "3/4", "4/5"], correct: 2}));
+                    set.push(this.withMeta(1, 4, {difficulty: "Zor", text: "x farkı sıfır olan dikey doğru için eğim nedir?", answers: ["0", "Tanımsız", "1", "∞"], correct: 1}));
+
                     pool.push(set);
                 }
                 
@@ -815,22 +1137,22 @@
             }
 
             // Diğer seviyeler için benzer havuzlar (basitleştirilmiş)
-            generateLevel3Pool() { return this.generateSimplePool("Açı", 20); }
-            generateLevel4Pool() { return this.generateSimplePool("Denklem", 20); }
-            generateLevel5Pool() { return this.generateSimplePool("Paralel", 20); }
-            generateLevel6Pool() { return this.generateSimplePool("Dik", 20); }
-            generateLevel7Pool() { return this.generateSimplePool("Grafik", 20); }
+            generateLevel3Pool() { return this.generateSimplePool("Açı", 20, 2); }
+            generateLevel4Pool() { return this.generateSimplePool("Denklem", 20, 3); }
+            generateLevel5Pool() { return this.generateSimplePool("Paralel", 20, 4); }
+            generateLevel6Pool() { return this.generateSimplePool("Dik", 20, 5); }
+            generateLevel7Pool() { return this.generateSimplePool("Grafik", 20, 6); }
 
-            generateSimplePool(type, count) {
+            generateSimplePool(type, count, levelIndex) {
                 // Mevcut soruları kullan ama sayıları değiştir
                 const pool = [];
-                const level = gameData.levels[this.currentLevel];
-                
+                const level = gameData.levels[levelIndex];
+
                 for (let i = 0; i < count; i++) {
-                    const set = level.questions.map(q => ({...q}));
+                    const set = level.questions.map((q, idx) => this.withMeta(levelIndex, idx, {...q}));
                     pool.push(set);
                 }
-                
+
                 return pool;
             }
 
@@ -1470,6 +1792,94 @@
                 return highlighted;
             }
 
+            getQuestionMeta(levelIndex, questionIndex) {
+                return (this.metaMap[levelIndex + 1] && this.metaMap[levelIndex + 1][questionIndex]) || {};
+            }
+
+            ensureQuestionMeta(question, levelIndex, questionIndex) {
+                const baseMeta = this.getQuestionMeta(levelIndex, questionIndex);
+                const enriched = {...question};
+
+                if (!enriched.tags || enriched.tags.length === 0) {
+                    enriched.tags = baseMeta.tags ? [...baseMeta.tags] : [];
+                }
+
+                if (!enriched.explanation) {
+                    enriched.explanation = baseMeta.explanation || {
+                        correct: 'Doğru mantığı takip ettin; aynı yaklaşımı sürdür.',
+                        wrong: 'Bir dahaki sefer temel ilişkiye odaklanarak işaret ve oranları birlikte gözden geçir.'
+                    };
+                }
+
+                return enriched;
+            }
+
+            withMeta(levelIndex, questionIndex, question) {
+                return this.ensureQuestionMeta(question, levelIndex, questionIndex);
+            }
+
+            hideExplanationBox() {
+                const box = document.getElementById('explanationBox');
+                if (!box) return;
+                box.classList.add('hidden');
+                box.classList.remove('correct', 'wrong');
+                box.innerHTML = '';
+            }
+
+            renderExplanation(question, isCorrect) {
+                const box = document.getElementById('explanationBox');
+                if (!box) return;
+
+                const explanationText = isCorrect
+                    ? question.explanation?.correct
+                    : question.explanation?.wrong;
+
+                if (!explanationText) {
+                    this.hideExplanationBox();
+                    return;
+                }
+
+                box.innerHTML = `<strong>${isCorrect ? 'Neden doğru?' : 'Birlikte bakalım:'}</strong> ${this.highlightMathTerms(explanationText)}`;
+                box.classList.toggle('correct', isCorrect);
+                box.classList.toggle('wrong', !isCorrect);
+                box.classList.remove('hidden');
+            }
+
+            buildLearningSummary() {
+                const tagSet = new Set();
+                this.currentQuestions.forEach(q => {
+                    (q.tags || []).forEach(tag => tagSet.add(tag));
+                });
+
+                const blurbs = [];
+                tagSet.forEach(tag => {
+                    if (blurbs.length >= 3) return;
+                    const text = this.conceptBlurbs[tag];
+                    if (text) {
+                        blurbs.push(text);
+                    }
+                });
+
+                return blurbs;
+            }
+
+            renderLearningSummary(items) {
+                const wrapper = document.getElementById('learningSummary');
+                const list = document.getElementById('learningSummaryList');
+                if (!wrapper || !list) return;
+
+                if (!items || items.length === 0) {
+                    wrapper.classList.add('hidden');
+                    list.innerHTML = '';
+                    return;
+                }
+
+                list.innerHTML = items
+                    .map(text => `<li>${this.highlightMathTerms(text)}</li>`)
+                    .join('');
+                wrapper.classList.remove('hidden');
+            }
+
             buildDialogues(story) {
                 const primary = story.character === '🤖' ? 'Orion'
                     : story.character === '👨‍🚀' ? 'Axel'
@@ -1516,10 +1926,16 @@
             showStoryAndQuestion() {
                 const level = gameData.levels[this.currentLevel];
                 const story = level.stories[this.currentQuestion];
-                const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
+                const question = this.ensureQuestionMeta(
+                    this.currentQuestions[this.currentQuestion],
+                    this.currentLevel,
+                    this.currentQuestion
+                );
+                this.currentQuestions[this.currentQuestion] = question;
                 this.hintUsedThisQuestion = false;
                 this.updateHintBar();
                 this.clearDialogHighlights();
+                this.hideExplanationBox();
 
                 // Soru kartını gizle
                 const questionCard = document.getElementById('questionCard');
@@ -1730,11 +2146,14 @@
 
                 buttons.forEach(btn => btn.disabled = true);
 
-                if (answerIndex === question.correct) {
+                const isCorrect = answerIndex === question.correct;
+                this.renderExplanation(question, isCorrect);
+
+                if (isCorrect) {
                     buttons[answerIndex].classList.add('correct');
                     this.correctAnswers++;
                     this.playSound('correct');
-                    
+
                     setTimeout(() => {
                         this.nextQuestion();
                     }, 1000);
@@ -1954,6 +2373,9 @@
                     resultBadge.textContent = '';
                     resultBadge.classList.add('hidden');
                 }
+
+                const summaryItems = this.buildLearningSummary();
+                this.renderLearningSummary(summaryItems);
 
                 this.showScreen('resultScreen');
             }
