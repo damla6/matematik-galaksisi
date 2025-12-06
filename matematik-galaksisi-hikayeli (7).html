@@ -24,35 +24,47 @@
             <div class="welcome-screen">
                 <h1 class="game-title">🚀 Matematik Galaksisi</h1>
                 <p class="game-subtitle">Doğru Macerası</p>
-                
-                <div class="character-intro">
-                    <h2 class="character-name">👨‍🚀 Zeron - Galaktik Kaşif</h2>
-                    <p class="character-desc">
-                        Kaos Lordu galakside büyük bir karmaşa yaratmış durumda! Yıldız haritaları bozulmuş, 
-                        koordinat sistemleri çökmüş ve matematik düzeni tamamen alt üst olmuş. 
-                        Axel, bu karmaşayı çözmek ve galaksiye düzeni geri getirmek için yola çıktı.
-                    </p>
+
+                <div class="hero-intro">
+                    <p class="intro-kicker">Axel &amp; Orion galaksiyi kurtarmak için yola çıktı.</p>
+                    <p class="intro-lead">Bozulan yıldız rotaları, çöken <span class="math-term">analitik düzlem</span> ve Kaos Lordu'nun tuzakları arasında ilerleyeceksin.</p>
                 </div>
 
-                <div class="character-intro">
-                    <h2 class="character-name">🤖 Orion - Hologram Asistan</h2>
-                    <p class="character-desc">
-                        Yapay zeka destekli hologram asistanı Orion, Axel'in yanında olacak. 
-                        Ancak gerçek gücü senden gelecek! 7 zorlu seviyeyi geçerek Kaos Lordu'nu 
-                        yenmen ve galaksiyi kurtarman gerekiyor. Her seviyede 5 soru var ve zorluk 
-                        giderek artıyor. Süre sınırın var, dikkatli ol!
-                    </p>
-                </div>
+                <div class="collapsible-intro">
+                    <button class="collapse-toggle" id="introToggle" aria-expanded="false">
+                        Daha fazlasını oku ▼
+                    </button>
+                    <div class="collapse-panel" id="longIntro" hidden>
+                        <div class="character-intro">
+                            <h2 class="character-name">👨‍🚀 Zeron - Galaktik Kaşif</h2>
+                            <p class="character-desc">
+                                Kaos Lordu galakside büyük bir karmaşa yaratmış durumda! Yıldız haritaları bozulmuş,
+                                koordinat sistemleri çökmüş ve matematik düzeni tamamen alt üst olmuş.
+                                Axel, bu karmaşayı çözmek ve galaksiye düzeni geri getirmek için yola çıktı.
+                            </p>
+                        </div>
 
-                <div class="character-intro character-intro-warning">
-                    <h2 class="character-name">⚠️ Görev Kuralları</h2>
-                    <p class="character-desc">
-                        • Her seviyede 5 soru bulunur (Kolay → Zor)<br>
-                        • Her seviyenin kendine özel süre sınırı var<br>
-                        • Süre dolarsa seviye kapanır<br>
-                        • Erken bitirene bonus puan verilir<br>
-                        • Bir seviyeyi bitirmeden diğerine geçemezsin
-                    </p>
+                        <div class="character-intro">
+                            <h2 class="character-name">🤖 Orion - Hologram Asistan</h2>
+                            <p class="character-desc">
+                                Yapay zeka destekli hologram asistanı Orion, Axel'in yanında olacak.
+                                Ancak gerçek gücü senden gelecek! 7 zorlu seviyeyi geçerek Kaos Lordu'nu
+                                yenmen ve galaksiyi kurtarman gerekiyor. Her seviyede 5 soru var ve zorluk
+                                giderek artıyor. Süre sınırın var, dikkatli ol!
+                            </p>
+                        </div>
+
+                        <div class="character-intro character-intro-warning">
+                            <h2 class="character-name">⚠️ Görev Kuralları</h2>
+                            <p class="character-desc">
+                                • Her seviyede 5 soru bulunur (Kolay → Zor)<br>
+                                • Her seviyenin kendine özel süre sınırı var<br>
+                                • Süre dolarsa seviye kapanır<br>
+                                • Erken bitirene bonus puan verilir<br>
+                                • Bir seviyeyi bitirmeden diğerine geçemezsin
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()">
@@ -100,6 +112,10 @@
                         <div class="story-title" id="storyTitle">Orion Konuşuyor...</div>
                         <div class="story-text" id="storyText">Hazırlanıyor...</div>
                     </div>
+
+                <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
+                    <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
+                </div>
 
                 <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
                     <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
@@ -673,6 +689,8 @@
                 this.particleBaseCount = this.isMobileViewport ? 8 : 15;
                 this.hintAvailable = false;
                 this.hintUsedThisQuestion = false;
+                this.activeDialogues = [];
+                this.dialogHighlightTimers = [];
 
                 this.initStars();
                 this.initMusicControl();
@@ -1425,12 +1443,83 @@
                 return null;
             }
 
+            highlightMathTerms(text) {
+                if (!text) return '';
+
+                const terms = [
+                    'analitik düzlem',
+                    'doğru denklemi',
+                    'koordinat sistemi',
+                    'eğim',
+                    'kadran',
+                    'paralel',
+                    'tanımsız',
+                    'dikey',
+                    'y ekseni',
+                    'x ekseni',
+                    'açı'
+                ];
+
+                let highlighted = text;
+
+                terms.sort((a, b) => b.length - a.length).forEach(term => {
+                    const pattern = new RegExp(`(${term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+                    highlighted = highlighted.replace(pattern, '<span class="math-term">$1</span>');
+                });
+
+                return highlighted;
+            }
+
+            buildDialogues(story) {
+                const primary = story.character === '🤖' ? 'Orion'
+                    : story.character === '👨‍🚀' ? 'Axel'
+                    : 'Axel';
+                const secondary = primary === 'Axel' ? 'Orion' : 'Axel';
+                let sentences = (story.text || '').split(/(?<=[.!?])\s+/).filter(Boolean);
+
+                const maxLines = 3;
+                if (sentences.length > maxLines) {
+                    const trimmed = sentences.slice(0, maxLines - 1);
+                    trimmed.push(sentences.slice(maxLines - 1).join(' '));
+                    sentences = trimmed;
+                }
+
+                if (sentences.length === 0) {
+                    sentences = [story.text || ''];
+                }
+
+                return sentences.map((sentence, index) => ({
+                    speaker: index % 2 === 0 ? primary : secondary,
+                    text: sentence
+                }));
+            }
+
+            renderDialogues(dialogues) {
+                const storyTextElement = document.getElementById('storyText');
+                storyTextElement.innerHTML = '';
+
+                dialogues.forEach(dialogue => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `dialog-bubble dialog-${dialogue.speaker.toLowerCase()}`;
+                    bubble.innerHTML = `<span class="dialog-speaker">${dialogue.speaker}:</span> ${this.highlightMathTerms(dialogue.text)}`;
+                    storyTextElement.appendChild(bubble);
+                });
+            }
+
+            clearDialogHighlights() {
+                const bubbles = document.querySelectorAll('.dialog-bubble');
+                bubbles.forEach(b => b.classList.remove('active'));
+                this.dialogHighlightTimers.forEach(timer => clearTimeout(timer));
+                this.dialogHighlightTimers = [];
+            }
+
             showStoryAndQuestion() {
                 const level = gameData.levels[this.currentLevel];
                 const story = level.stories[this.currentQuestion];
                 const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
                 this.hintUsedThisQuestion = false;
                 this.updateHintBar();
+                this.clearDialogHighlights();
 
                 // Soru kartını gizle
                 const questionCard = document.getElementById('questionCard');
@@ -1440,15 +1529,16 @@
                 // Hikaye göster
                 document.getElementById('storyCharacter').textContent = story.character;
                 document.getElementById('storyTitle').textContent = story.title;
-                document.getElementById('storyText').textContent = '';
+                this.activeDialogues = this.buildDialogues(story);
+                this.renderDialogues(this.activeDialogues);
 
                 // Soru bilgilerini hazırla
                 const questionNum = this.currentQuestion + 1;
                 const difficulty = question.difficulty || '';
-                
-                document.getElementById('questionNumber').textContent = 
+
+                document.getElementById('questionNumber').textContent =
                     `Soru ${questionNum}/${this.currentQuestions.length} • ${difficulty}`;
-                document.getElementById('questionText').textContent = question.text;
+                document.getElementById('questionText').innerHTML = this.highlightMathTerms(question.text);
 
                 const answersGrid = document.getElementById('answersGrid');
                 answersGrid.innerHTML = '';
@@ -1476,14 +1566,14 @@
                 this.updateProgress();
 
                 // Seslendirme başlat
-                this.narrateStory(story.text, () => {
+                this.narrateStory(story, () => {
                     // Seslendirme bitince soruyu göster
                     document.getElementById('questionCard').style.display = 'block';
                     document.getElementById('questionCard').style.animation = 'slideInRight 0.5s ease';
                 });
             }
 
-            narrateStory(text, onComplete) {
+            narrateStory(story, onComplete) {
                 // Önceki seslendirmeyi durdur
                 if (this.currentSpeech) {
                     window.speechSynthesis.cancel();
@@ -1494,15 +1584,18 @@
                     this.wordInterval = null;
                 }
 
-                // Kelime bazlı senkronizasyon için metni hazırla
-                const words = text.split(' ');
+                const dialogues = this.activeDialogues && this.activeDialogues.length > 0
+                    ? this.activeDialogues
+                    : this.buildDialogues(story);
+
+                const speechText = story.text || dialogues.map(d => `${d.speaker}: ${d.text}`).join(' ');
+                const words = speechText.split(' ');
                 const storyTextElement = document.getElementById('storyText');
-                storyTextElement.textContent = '';
 
                 // Sesleri yükle ve en iyi Türkçe sesi seç
                 this.loadVoices().then(voices => {
                     // Web Speech API
-                    const speech = new SpeechSynthesisUtterance(text);
+                    const speech = new SpeechSynthesisUtterance(speechText);
                     
                     // En iyi Türkçe sesi seç - kaliteli ve akıcı olanlar öncelikli
                     const turkishVoice = 
@@ -1542,76 +1635,35 @@
                     
                     this.currentSpeech = speech;
 
-                    let currentWordIndex = 0;
-                    // Daha akıcı kelime gösterimi için timing ayarı
                     const wordsPerSecond = speech.rate * 2.2; // 2.5'ten 2.2'ye - daha rahat
                     const msPerWord = 1000 / wordsPerSecond;
 
-                    // Kelime bazlı animasyon
-                    this.wordInterval = setInterval(() => {
-                        if (currentWordIndex < words.length) {
-                            // Mevcut kelimeyi ekle
-                            const wordSpan = document.createElement('span');
-                            wordSpan.textContent = words[currentWordIndex] + ' ';
-                            wordSpan.style.opacity = '0';
-                            wordSpan.style.display = 'inline-block';
-                            wordSpan.style.animation = 'wordFadeIn 0.4s ease-out forwards'; // 0.3'ten 0.4'e - daha yumuşak
-                            
-                            // Önemli kelimeleri vurgula - daha geniş liste
-                            const emphasisWords = [
-                                'dikkat', 'uyarı', 'tehlike', 'önemli', 'gerekli', 'zorunda', 
-                                'mutlaka', 'şart', 'kritik', 'acele', 'hemen', 'çabuk',
-                                'kaos', 'lordu', 'şeytan', 'düşman', 'savaş', 'çarpışma',
-                                'harita', 'koordinat', 'eğim', 'tünel', 'tapınak', 'köprü',
-                                'final', 'son', 'zafer', 'başarı', 'galaksi', 'kurtarma',
-                                'hesapla', 'bul', 'çöz', 'seç', 'belirle', 'işaretle',
-                                'ha ha', 'mükemmel', 'harika', 'muhteşem', 'bravo',
-                                'yanlış', 'doğru', 'tanımsız', 'paralel', 'dik', 'kesişir'
-                            ];
-                            
-                            const isEmphasis = emphasisWords.some(word => 
-                                words[currentWordIndex].toLowerCase().replace(/[!?.,:;]/g, '').includes(word)
-                            );
-                            
-                            // Ünlem ve soru işaretlerini de vurgula
-                            const hasExclamation = words[currentWordIndex].includes('!');
-                            const hasQuestion = words[currentWordIndex].includes('?');
-                            
-                            if (isEmphasis || hasExclamation) {
-                                wordSpan.style.color = '#ffff00';
-                                wordSpan.style.fontWeight = '900';
-                                wordSpan.style.textShadow = '0 0 20px #ffff00, 0 0 40px #ffff00';
-                                wordSpan.style.transform = 'scale(1.15)';
-                            } else if (hasQuestion) {
-                                wordSpan.style.color = '#00ffff';
-                                wordSpan.style.fontWeight = '800';
-                                wordSpan.style.textShadow = '0 0 15px #00ffff';
+                    // Diyalog balonlarını ses ile senkronize et
+                    this.clearDialogHighlights();
+                    const bubbles = Array.from(document.querySelectorAll('.dialog-bubble'));
+                    const counts = dialogues.map(d => Math.max(1, d.text.split(' ').filter(Boolean).length));
+                    let cumulative = 0;
+
+                    counts.forEach((count, index) => {
+                        const startAt = cumulative * msPerWord;
+                        cumulative += count;
+                        const timer = setTimeout(() => {
+                            bubbles.forEach(b => b.classList.remove('active'));
+                            const target = bubbles[index];
+                            if (target) {
+                                target.classList.add('active');
+                                target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                             }
-
-                            storyTextElement.appendChild(wordSpan);
-                            currentWordIndex++;
-
-                            // Scroll otomatik
-                            storyTextElement.scrollTop = storyTextElement.scrollHeight;
-                        } else {
-                            clearInterval(this.wordInterval);
-                            this.wordInterval = null;
-                        }
-                    }, msPerWord);
+                        }, startAt);
+                        this.dialogHighlightTimers.push(timer);
+                    });
 
                     // Seslendirme bitince
                     speech.onend = () => {
-                        clearInterval(wordInterval);
-                        // Kalan kelimeleri ekle
-                        while (currentWordIndex < words.length) {
-                            const wordSpan = document.createElement('span');
-                            wordSpan.textContent = words[currentWordIndex] + ' ';
-                            storyTextElement.appendChild(wordSpan);
-                            currentWordIndex++;
-                        }
-                        
+                        this.clearDialogHighlights();
+
                         this.currentSpeech = null;
-                        
+
                         // Müziği normale getir
                         if (this.musicNodes.length > 0) {
                             this.musicNodes.forEach(node => {
@@ -1628,8 +1680,8 @@
                     // Hata durumunda
                     speech.onerror = (event) => {
                         console.error('Seslendirme hatası:', event);
-                        clearInterval(wordInterval);
-                        storyTextElement.textContent = text;
+                        this.clearDialogHighlights();
+                        storyTextElement.innerHTML = this.highlightMathTerms(speechText);
                         this.currentSpeech = null;
                         
                         // Müziği normale getir
@@ -1931,6 +1983,21 @@
 
         // Oyunu başlat
         const game = new Game();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggle = document.getElementById('introToggle');
+            const panel = document.getElementById('longIntro');
+
+            if (toggle && panel) {
+                toggle.addEventListener('click', () => {
+                    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                    const nextState = !expanded;
+                    toggle.setAttribute('aria-expanded', nextState.toString());
+                    panel.hidden = !nextState;
+                    toggle.textContent = nextState ? 'Daha az göster ▲' : 'Daha fazlasını oku ▼';
+                });
+            }
+        });
     </script>
 </body>
 </html>

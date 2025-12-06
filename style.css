@@ -576,6 +576,64 @@
             animation: neonFlicker 3s ease-in-out infinite;
         }
 
+        .hero-intro {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.35);
+            border-radius: 20px;
+            padding: 18px 20px;
+            max-width: 780px;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .intro-kicker {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            letter-spacing: 1px;
+            color: #d0e8ff;
+            margin-bottom: 6px;
+        }
+
+        .intro-lead {
+            font-size: clamp(1.2rem, 3.4vw, 1.5rem);
+            line-height: 1.65;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .collapsible-intro {
+            max-width: 820px;
+            margin: 0 auto 26px auto;
+            text-align: left;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .collapse-toggle {
+            width: 100%;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), rgba(123, 47, 247, 0.2));
+            color: #e2f4ff;
+            border: none;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .collapse-toggle:hover {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.32), rgba(123, 47, 247, 0.32));
+            color: #ffffff;
+        }
+
+        .collapse-panel {
+            padding: 12px 20px 18px 20px;
+            background: rgba(0, 0, 0, 0.55);
+        }
+
         @keyframes neonFlicker {
             0%, 100% { opacity: 1; text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff; }
             50% { opacity: 0.8; text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 45px #00ffff; }
@@ -1082,22 +1140,22 @@
 
         .story-text {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
-            line-height: 2.4;
+            font-size: clamp(1.05rem, 3vw, 1.5rem);
+            line-height: 1.8;
             color: #ffffff;
-            text-align: center;
-            font-style: italic;
-            text-shadow:
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 4px 15px rgba(0, 0, 0, 0.9);
-            padding: 15px 40px 70px 40px;
+            text-align: left;
+            font-style: normal;
+            padding: 12px 24px 16px 24px;
             font-weight: 600;
             position: relative;
             z-index: 1;
-            min-height: 120px;
-            max-height: clamp(240px, 32vh, 380px);
+            min-height: 140px;
+            max-height: clamp(260px, 34vh, 400px);
             overflow-y: auto;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             width: 100%;
         }
 
@@ -1134,6 +1192,54 @@
 
         .story-text::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 0, 0.8);
+        }
+
+        .dialog-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+            position: relative;
+            width: 100%;
+            max-width: 95%;
+            align-self: flex-start;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .dialog-bubble.active {
+            border-color: rgba(0, 212, 255, 0.7);
+            box-shadow: 0 12px 28px rgba(0, 212, 255, 0.35);
+            transform: translateY(-3px);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .dialog-axel {
+            background: linear-gradient(135deg, rgba(247, 37, 133, 0.08), rgba(247, 37, 133, 0.15));
+            border-color: rgba(247, 37, 133, 0.25);
+            align-self: flex-end;
+        }
+
+        .dialog-orion {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 212, 255, 0.15));
+            border-color: rgba(0, 212, 255, 0.25);
+        }
+
+        .dialog-speaker {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            color: #d0f6ff;
+            text-transform: uppercase;
+            font-size: 0.95em;
+        }
+
+        .math-term {
+            color: #ffe082;
+            font-weight: 800;
+            text-decoration: underline wavy rgba(255, 224, 130, 0.7);
+            text-decoration-thickness: 2px;
         }
 
         .story-text::after {
@@ -2065,6 +2171,39 @@
                 grid-template-columns: 1fr;
             }
 
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
             .result-card {
                 padding: 30px 20px;
             }
@@ -2097,13 +2236,19 @@
             }
 
             .story-text {
-                padding: 10px 18px 40px 18px;
-                line-height: 1.95;
-                max-height: clamp(200px, 38vh, 280px);
+                padding: 10px 14px 28px 14px;
+                line-height: 1.75;
+                gap: 6px;
+                max-height: clamp(210px, 44vh, 280px);
             }
 
             .question-text {
                 padding: 18px;
+            }
+
+            .dialog-bubble {
+                padding: 10px 12px;
+                max-width: 100%;
             }
         }
     
