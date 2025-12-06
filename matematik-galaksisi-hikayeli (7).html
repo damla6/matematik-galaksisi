@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()">
+                <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()" aria-label="Maceraya Başla">
                     Maceraya Başla! 🚀
                 </button>
             </div>
@@ -99,7 +99,7 @@
             <div class="level-select">
                 <h1 class="game-title">Seviye Seç</h1>
                 <div class="levels-grid" id="levelsGrid"></div>
-                <button class="btn btn-danger top-spacing" onclick="game.playSound('click'); game.showWelcome()">
+                <button class="btn btn-danger top-spacing" onclick="game.playSound('click'); game.showWelcome()" aria-label="Ana Menü">
                     Ana Menü
                 </button>
             </div>
@@ -184,10 +184,10 @@
                     </div>
 
                     <div class="result-actions">
-                        <button class="btn btn-success" onclick="game.playSound('click'); game.nextLevel()">
+                        <button class="btn btn-success" onclick="game.playSound('click'); game.nextLevel()" aria-label="Sonraki Seviye">
                             Sonraki Seviye 🚀
                         </button>
-                        <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()">
+                        <button class="btn btn-primary" onclick="game.playSound('click'); game.showLevelSelect()" aria-label="Seviye Seç">
                             Seviye Seç
                         </button>
                     </div>
@@ -1188,6 +1188,7 @@
                 this.isMobileViewport = window.matchMedia('(max-width: 480px)').matches;
                 this.starCount = this.computeStarCount();
                 this.particleBaseCount = this.computeParticleCount();
+                this.levelTransitionLock = false;
                 this.hintAvailable = false;
                 this.hintUsedThisQuestion = false;
                 this.activeDialogues = [];
@@ -1408,7 +1409,6 @@
                 const pool = this.questionPools[poolKey];
 
                 if (!pool || pool.length === 0) {
-                    console.warn(`⚠️ Seviye ${levelIndex + 1} için soru havuzu bulunamadı`);
                     this.currentQuestions = [];
                     return;
                 }
@@ -1418,17 +1418,16 @@
 
                 if (mixedSet && mixedSet.length) {
                     this.currentQuestions = mixedSet;
-                    console.log(`🎯 Seviye ${levelIndex + 1} için Bloom dengeli set oluşturuldu`);
                 } else {
                     const randomIndex = Math.floor(Math.random() * pool.length);
                     this.currentQuestions = pool[randomIndex];
-                    console.log(`🎲 Seviye ${levelIndex + 1} için ${randomIndex + 1}. soru seti seçildi (varsayılan)`);
                 }
 
             }
 
             initStars() {
                 const starsContainer = document.getElementById('stars');
+                if (!starsContainer) return;
                 starsContainer.innerHTML = '';
                 const count = this.computeStarCount();
                 this.starElements = [];
@@ -1564,7 +1563,6 @@
                 // Web Audio API ile uzay müziği oluştur
                 try {
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    console.log('🎵 Audio Context oluşturuldu');
                 } catch (e) {
                     console.error('Audio Context hatası:', e);
                 }
@@ -1573,7 +1571,6 @@
                 const startAmbientMusic = () => {
                     if (this.audioContext && this.audioContext.state === 'suspended') {
                         this.audioContext.resume().then(() => {
-                            console.log('🎵 Audio Context devam ediyor');
                         });
                     }
 
@@ -1653,7 +1650,6 @@
                     }, index * 800); // Stagger başlangıç
                 });
 
-                console.log('🎵 Arka plan müziği başladı');
             }
 
             stopAmbientMusic() {
@@ -1664,9 +1660,8 @@
                     node.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 1);
                     node.oscillator.stop(this.audioContext.currentTime + 1);
                 });
-                
+
                 this.musicNodes = [];
-                console.log('🔇 Arka plan müziği durduruldu');
             }
 
             playSound(type) {
@@ -1986,6 +1981,7 @@
 
             renderLevelSelect() {
                 const grid = document.getElementById('levelsGrid');
+                if (!grid) return;
                 grid.innerHTML = '';
 
                 gameData.levels.forEach((level, index) => {
@@ -2044,6 +2040,15 @@
             }
 
             startLevel(levelIndex) {
+                if (this.levelTransitionLock) return;
+                this.levelTransitionLock = true;
+                const level = gameData.levels[levelIndex];
+                if (!level) {
+                    this.levelTransitionLock = false;
+                    return;
+                }
+
+                this.stopActiveLoops();
                 this.currentLevel = levelIndex;
                 this.currentQuestion = 0;
                 this.correctAnswers = 0;
@@ -2053,7 +2058,6 @@
                 this.hintUsedThisQuestion = false;
                 this.updateHintBar(false);
 
-                const level = gameData.levels[levelIndex];
                 this.timeRemaining = level.time;
 
                 if (this.settings.lowPerf) {
@@ -2080,18 +2084,20 @@
                 }
                 
                 this.startTimer();
+
+                setTimeout(() => {
+                    this.levelTransitionLock = false;
+                }, 400);
             }
 
             loadVoices() {
                 return new Promise((resolve) => {
                     let voices = window.speechSynthesis.getVoices();
                     if (voices.length > 0) {
-                        console.log('🎙️ Sesler yüklendi:', voices.length);
                         resolve(voices);
                     } else {
                         window.speechSynthesis.onvoiceschanged = () => {
                             voices = window.speechSynthesis.getVoices();
-                            console.log('🎙️ Sesler güncellendi:', voices.length);
                             resolve(voices);
                         };
                     }
@@ -2454,12 +2460,16 @@
 
                 // Soru kartını gizle
                 const questionCard = document.getElementById('questionCard');
-                questionCard.style.display = 'none';
-                questionCard.classList.remove('shake');
+                if (questionCard) {
+                    questionCard.style.display = 'none';
+                    questionCard.classList.remove('shake');
+                }
 
                 // Hikaye göster
-                document.getElementById('storyCharacter').textContent = story.character;
-                document.getElementById('storyTitle').textContent = story.title;
+                const storyCharacter = document.getElementById('storyCharacter');
+                const storyTitle = document.getElementById('storyTitle');
+                if (storyCharacter) storyCharacter.textContent = story.character;
+                if (storyTitle) storyTitle.textContent = story.title;
                 this.activeDialogues = this.buildDialogues(story);
                 this.renderDialogues(this.activeDialogues);
 
@@ -2467,8 +2477,11 @@
                 const questionNum = this.currentQuestion + 1;
                 const difficulty = question.difficulty || '';
 
-                document.getElementById('questionNumber').textContent =
-                    `Soru ${questionNum}/${this.currentQuestions.length} • ${difficulty}`;
+                const questionNumberEl = document.getElementById('questionNumber');
+                if (questionNumberEl) {
+                    questionNumberEl.textContent =
+                        `Soru ${questionNum}/${this.currentQuestions.length} • ${difficulty}`;
+                }
                 const topicLabel = this.formatTopicLabel(question.topic);
                 const bloomLabel = this.formatBloomLabel(question.bloomLevel);
                 const metaLine = [
@@ -2476,11 +2489,17 @@
                     bloomLabel ? `Düzey: ${bloomLabel}` : null
                 ].filter(Boolean).join(' | ');
                 const metaEl = document.getElementById('questionMeta');
-                metaEl.textContent = metaLine;
-                metaEl.classList.toggle('hidden', !metaLine);
-                document.getElementById('questionText').innerHTML = this.highlightMathTerms(question.text);
+                if (metaEl) {
+                    metaEl.textContent = metaLine;
+                    metaEl.classList.toggle('hidden', !metaLine);
+                }
+                const questionTextEl = document.getElementById('questionText');
+                if (questionTextEl) {
+                    questionTextEl.innerHTML = this.highlightMathTerms(question.text);
+                }
 
                 const answersGrid = document.getElementById('answersGrid');
+                if (!answersGrid) return;
                 answersGrid.innerHTML = '';
 
                 question.answers.forEach((answer, index) => {
@@ -2509,8 +2528,10 @@
                 // Seslendirme başlat
                 this.narrateStory(story, () => {
                     // Seslendirme bitince soruyu göster
-                    document.getElementById('questionCard').style.display = 'block';
-                    document.getElementById('questionCard').style.animation = 'slideInRight 0.28s ease';
+                    if (questionCard) {
+                        questionCard.style.display = 'block';
+                        questionCard.style.animation = 'slideInRight 0.28s ease';
+                    }
                 });
             }
 
@@ -2578,7 +2599,6 @@
 
                     if (turkishVoice) {
                         speech.voice = turkishVoice;
-                        console.log('🎙️ Seçilen ses:', turkishVoice.name, '| Dil:', turkishVoice.lang);
                     } else {
                         console.warn('⚠️ Türkçe ses bulunamadı, varsayılan kullanılıyor');
                     }
@@ -2642,7 +2662,9 @@
                     speech.onerror = (event) => {
                         console.error('Seslendirme hatası:', event);
                         this.clearDialogHighlights();
-                        storyTextElement.innerHTML = this.highlightMathTerms(speechText);
+                        if (storyTextElement) {
+                            storyTextElement.innerHTML = this.highlightMathTerms(speechText);
+                        }
                         this.currentSpeech = null;
                         this.updateReplayButtonState();
                         
@@ -2655,15 +2677,6 @@
                         
                         if (onComplete) {
                             setTimeout(onComplete, 500);
-                        }
-                    };
-
-                    // Kelime sınırlarını dinle (destekleyen tarayıcılarda)
-                    let wordBoundaryIndex = 0;
-                    speech.onboundary = (event) => {
-                        if (event.name === 'word') {
-                            // Gerçek kelime senkronizasyonu
-                            wordBoundaryIndex++;
                         }
                     };
 
@@ -2689,12 +2702,17 @@
             updateProgress() {
                 const level = gameData.levels[this.currentLevel];
                 const progress = ((this.currentQuestion) / level.questions.length) * 100;
-                document.getElementById('progressBar').style.width = progress + '%';
+                const bar = document.getElementById('progressBar');
+                if (bar) {
+                    bar.style.width = progress + '%';
+                }
             }
 
             checkAnswer(answerIndex) {
                 const question = this.currentQuestions[this.currentQuestion]; // HAVUZDAN ALINAN SORU
+                if (!question) return;
                 const buttons = document.querySelectorAll('.answer-btn');
+                if (!buttons.length) return;
                 const questionCard = document.getElementById('questionCard');
 
                 buttons.forEach(btn => btn.disabled = true);
@@ -2702,8 +2720,13 @@
                 const isCorrect = answerIndex === question.correct;
                 this.renderExplanation(question, isCorrect);
 
+                const selectedButton = buttons[answerIndex];
+                const correctButton = buttons[question.correct];
+
                 if (isCorrect) {
-                    buttons[answerIndex].classList.add('correct');
+                    if (selectedButton) {
+                        selectedButton.classList.add('correct');
+                    }
                     this.correctAnswers++;
                     this.playSound('correct');
 
@@ -2711,8 +2734,12 @@
                         this.nextQuestion();
                     }, 1000);
                 } else {
-                    buttons[answerIndex].classList.add('wrong');
-                    buttons[question.correct].classList.add('correct');
+                    if (selectedButton) {
+                        selectedButton.classList.add('wrong');
+                    }
+                    if (correctButton) {
+                        correctButton.classList.add('correct');
+                    }
                     this.wrongAnswers++;
                     this.playSound('wrong');
 
@@ -2725,7 +2752,6 @@
 
                     // 3 YANLIŞ KONTROLÜ
                     if (this.wrongAnswers >= 3) {
-                        console.log('❌ 3 yanlış yapıldı! Seviye başarısız.');
                         setTimeout(() => {
                             this.showGentleFailure();
                         }, 1400);
@@ -2745,6 +2771,7 @@
 
             updateHintBar(forceShow = false) {
                 const hintBar = document.getElementById('hintBar');
+                if (!hintBar) return;
                 const shouldShow = (this.hintAvailable || forceShow) && this.wrongAnswers >= 2;
                 hintBar.hidden = !shouldShow;
                 const hintButton = hintBar.querySelector('.hint-btn');
@@ -2785,8 +2812,8 @@
                         <h2 class="gentle-title" id="failureTitle">Tekrar Deneyelim!</h2>
                         <p class="gentle-text" id="failureDescription">${level.title} macerası bitmedi! Daha sakin bir denemeyle başarabilirsin.</p>
                         <div class="gentle-actions">
-                            <button class="btn btn-success" onclick="game.retryLevelWithHint()">💡 İpuçlu Yeniden Dene</button>
-                            <button class="btn btn-primary" onclick="game.exitToLevelSelect()">📋 Seviye Seçimi</button>
+                            <button class="btn btn-success" onclick="game.retryLevelWithHint()" aria-label="İpuçlu Yeniden Dene">💡 İpuçlu Yeniden Dene</button>
+                            <button class="btn btn-primary" onclick="game.exitToLevelSelect()" aria-label="Seviye Seçimi">📋 Seviye Seçimi</button>
                         </div>
                     </div>
                 `;
@@ -2807,7 +2834,6 @@
                 this.playSound('click');
 
                 // Seviyeyi yeni sorularla yeniden başlat
-                console.log('🔄 Bölüm havuzdan yeni sorularla yeniden başlatılıyor...');
                 setTimeout(() => {
                     this.retryLevel();
                 }, 500);
@@ -2843,8 +2869,6 @@
             }
 
             retryLevel() {
-                // Seviyeyi sıfırla ve havuzdan YENİ sorular seç
-                console.log('🔄 Seviye yeniden başlatılıyor...');
                 this.startLevel(this.currentLevel);
             }
 
@@ -2869,7 +2893,10 @@
                     this.updateTimerDisplay();
 
                     if (this.timeRemaining <= 30) {
-                        document.getElementById('timer').classList.add('warning');
+                        const timerEl = document.getElementById('timer');
+                        if (timerEl) {
+                            timerEl.classList.add('warning');
+                        }
                     }
 
                     if (this.timeRemaining <= 0) {
@@ -2881,8 +2908,10 @@
             updateTimerDisplay() {
                 const minutes = Math.floor(this.timeRemaining / 60);
                 const seconds = this.timeRemaining % 60;
-                document.getElementById('timer').textContent = 
-                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                const timerEl = document.getElementById('timer');
+                if (timerEl) {
+                    timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
             }
 
             timeUp() {
@@ -2904,19 +2933,46 @@
 
                 this.playSound('complete');
 
-                document.getElementById('resultIcon').textContent =
-                    this.correctAnswers >= 4 ? '🎉' : this.correctAnswers >= 3 ? '👍' : '💪';
-                document.getElementById('resultTitle').textContent = 
-                    this.correctAnswers >= 4 ? 'Mükemmel!' : 
-                    this.correctAnswers >= 3 ? 'İyi İş!' : 'Devam Et!';
-                document.getElementById('resultMessage').textContent = 
-                    this.correctAnswers >= 4 ? 'Seviyeyi harika tamamladın! Matematik kahramanısın!' :
-                    this.correctAnswers >= 3 ? 'Güzel bir performans! Bir sonraki seviyeye hazır mısın?' :
-                    'Pratik yapmaya devam et, başarılı olacaksın!';
-                
-                document.getElementById('correctAnswers').textContent = this.correctAnswers;
-                document.getElementById('wrongAnswers').textContent = this.wrongAnswers;
-                document.getElementById('timeBonus').textContent = '+' + timeBonus;
+                const resultIcon = document.getElementById('resultIcon');
+                if (resultIcon) {
+                    resultIcon.textContent =
+                        this.correctAnswers >= 4 ? '🎉' : this.correctAnswers >= 3 ? '👍' : '💪';
+                }
+                const resultTitle = document.getElementById('resultTitle');
+                if (resultTitle) {
+                    resultTitle.textContent =
+                        this.correctAnswers >= 4 ? 'Mükemmel!' :
+                        this.correctAnswers >= 3 ? 'İyi İş!' : 'Devam Et!';
+                }
+                const resultMessage = document.getElementById('resultMessage');
+                if (resultMessage) {
+                    resultMessage.textContent =
+                        this.correctAnswers >= 4 ? 'Seviyeyi harika tamamladın! Matematik kahramanısın!' :
+                        this.correctAnswers >= 3 ? 'Güzel bir performans! Bir sonraki seviyeye hazır mısın?' :
+                        'Pratik yapmaya devam et, başarılı olacaksın!';
+                }
+
+                const correctAnswersEl = document.getElementById('correctAnswers');
+                if (correctAnswersEl) correctAnswersEl.textContent = this.correctAnswers;
+                const wrongAnswersEl = document.getElementById('wrongAnswers');
+                if (wrongAnswersEl) wrongAnswersEl.textContent = this.wrongAnswers;
+                const timeBonusEl = document.getElementById('timeBonus');
+                if (timeBonusEl) timeBonusEl.textContent = '+' + timeBonus;
+
+                const resultBadge = document.getElementById('resultBadge');
+                if (badge) {
+                    resultBadge.textContent = `${this.getBadgeIcon(badge)} ${badge}`;
+                    resultBadge.classList.remove('hidden');
+                } else {
+                    resultBadge.textContent = '';
+                    resultBadge.classList.add('hidden');
+                }
+
+                const summaryItems = this.buildLearningSummary();
+                this.renderLearningSummary(summaryItems);
+
+                const bloomText = this.buildBloomSummaryText();
+                this.renderBloomSummary(bloomText);
 
                 const resultBadge = document.getElementById('resultBadge');
                 if (badge) {
@@ -2945,8 +3001,10 @@
             }
 
             showFinal() {
-                document.getElementById('finalScore').textContent = this.totalScore;
-                document.getElementById('finalCorrect').textContent = this.totalCorrect + '/35';
+                const finalScoreEl = document.getElementById('finalScore');
+                if (finalScoreEl) finalScoreEl.textContent = this.totalScore;
+                const finalCorrectEl = document.getElementById('finalCorrect');
+                if (finalCorrectEl) finalCorrectEl.textContent = this.totalCorrect + '/35';
                 const summary = document.getElementById('finalThemeSummary');
                 if (summary) {
                     summary.innerHTML = gameData.levels.map((level) => {
