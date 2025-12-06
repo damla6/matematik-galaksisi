@@ -12,9 +12,26 @@
     <!-- Yıldızlar Arka Plan -->
     <div class="stars" id="stars"></div>
 
-    <!-- Müzik Kontrolü -->
-    <div class="music-control" id="musicControl">
-        <span class="music-icon">🔊</span>
+    <!-- Ses Kontrol Paneli -->
+    <div class="audio-panel-wrapper">
+        <button class="music-control" id="musicControl" aria-expanded="false" aria-controls="audioPanel" aria-label="Ses panelini aç/kapa">
+            <span class="music-icon" aria-hidden="true">🔊</span>
+        </button>
+        <div class="audio-panel" id="audioPanel" hidden>
+            <div class="audio-panel-header">Ses Ayarları</div>
+            <label class="audio-toggle">
+                <input type="checkbox" id="musicToggle" checked>
+                <span class="toggle-label">Müzik</span>
+            </label>
+            <label class="audio-toggle">
+                <input type="checkbox" id="effectsToggle" checked>
+                <span class="toggle-label">Efekt Sesleri</span>
+            </label>
+            <label class="audio-toggle">
+                <input type="checkbox" id="speechToggle" checked>
+                <span class="toggle-label">Hikaye Anlatımı</span>
+            </label>
+        </div>
     </div>
 
     <!-- Ana Container -->
@@ -105,20 +122,14 @@
                     </div>
                 </div>
 
-                <div class="story-question-layout">
-                    <!-- Hikaye Kartı -->
-                    <div class="story-card" id="storyCard">
-                        <div class="story-character" id="storyCharacter">🤖</div>
-                        <div class="story-title" id="storyTitle">Orion Konuşuyor...</div>
-                        <div class="story-text" id="storyText">Hazırlanıyor...</div>
+                <!-- Hikaye Kartı -->
+                <div class="story-card" id="storyCard">
+                    <div class="story-character" id="storyCharacter">🤖</div>
+                    <div class="story-title" id="storyTitle">Orion Konuşuyor...</div>
+                    <div class="story-text" id="storyText">Hazırlanıyor...</div>
+                    <div class="story-actions">
+                        <button class="btn btn-secondary" id="replayStoryBtn" onclick="game.playSound('click'); game.replayStory()" aria-live="polite">🔁 Tekrar Oku</button>
                     </div>
-
-                <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
-                    <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
-                </div>
-
-                <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
-                    <button class="btn btn-warning hint-btn" onclick="game.playSound('click'); game.requestHint()">💡 İpucu Al</button>
                 </div>
 
                 <div class="hint-bar" id="hintBar" aria-live="polite" hidden>
@@ -993,6 +1004,11 @@
                 this.score = 0;
                 this.correctAnswers = 0;
                 this.wrongAnswers = 0;
+                this.settings = {
+                    music: true,
+                    effects: true,
+                    speech: true
+                };
                 this.timer = null;
                 this.timeRemaining = 0;
                 this.levelStartTime = 0;
@@ -1186,23 +1202,67 @@
 
             initMusicControl() {
                 const musicBtn = document.getElementById('musicControl');
-                
-                musicBtn.addEventListener('click', () => {
-                    this.musicPlaying = !this.musicPlaying;
+                const panel = document.getElementById('audioPanel');
+                const musicToggle = document.getElementById('musicToggle');
+                const effectsToggle = document.getElementById('effectsToggle');
+                const speechToggle = document.getElementById('speechToggle');
+
+                const syncToggles = () => {
+                    musicToggle.checked = this.settings.music;
+                    effectsToggle.checked = this.settings.effects;
+                    speechToggle.checked = this.settings.speech;
                     const icon = document.querySelector('.music-icon');
-                    
-                    if (this.musicPlaying) {
-                        icon.textContent = '🔊';
-                        if (this.audioContext && this.musicNodes.length === 0) {
-                            this.playAmbientMusic();
-                        }
-                    } else {
-                        icon.textContent = '🔇';
-                        if (this.audioContext && this.musicNodes.length > 0) {
-                            this.stopAmbientMusic();
-                        }
+                    icon.textContent = this.settings.music ? '🔊' : '🔇';
+                    this.updateReplayButtonState();
+                };
+
+                const togglePanel = () => {
+                    const expanded = musicBtn.getAttribute('aria-expanded') === 'true';
+                    musicBtn.setAttribute('aria-expanded', (!expanded).toString());
+                    panel.hidden = expanded;
+                };
+
+                musicBtn.addEventListener('click', () => {
+                    togglePanel();
+                });
+
+                musicBtn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        togglePanel();
                     }
                 });
+
+                musicToggle.addEventListener('change', () => {
+                    this.settings.music = musicToggle.checked;
+                    this.musicPlaying = this.settings.music;
+                    if (!this.settings.music) {
+                        this.stopAmbientMusic();
+                    } else if (this.audioContext && this.musicNodes.length === 0) {
+                        this.playAmbientMusic();
+                    }
+                    syncToggles();
+                });
+
+                effectsToggle.addEventListener('change', () => {
+                    this.settings.effects = effectsToggle.checked;
+                    syncToggles();
+                });
+
+                speechToggle.addEventListener('change', () => {
+                    this.settings.speech = speechToggle.checked;
+                    if (!this.settings.speech) {
+                        this.clearDialogHighlights();
+                        if (this.currentSpeech) {
+                            window.speechSynthesis.cancel();
+                            this.currentSpeech = null;
+                        }
+                    }
+                    this.updateReplayButtonState();
+                    syncToggles();
+                });
+
+                syncToggles();
             }
 
             initAudio() {
@@ -1221,8 +1281,8 @@
                             console.log('🎵 Audio Context devam ediyor');
                         });
                     }
-                    
-                    if (this.musicPlaying && this.musicNodes.length === 0 && this.audioContext) {
+
+                    if (this.settings.music && this.musicPlaying && this.musicNodes.length === 0 && this.audioContext) {
                         this.playAmbientMusic();
                     }
                 };
@@ -1238,7 +1298,7 @@
                             if (this.audioContext && this.audioContext.state === 'suspended') {
                                 this.audioContext.resume();
                             }
-                            if (this.musicPlaying && this.musicNodes.length === 0 && this.audioContext) {
+                            if (this.settings.music && this.musicPlaying && this.musicNodes.length === 0 && this.audioContext) {
                                 this.playAmbientMusic();
                             }
                         }, { once: true });
@@ -1247,6 +1307,8 @@
             }
 
             playAmbientMusic() {
+                if (!this.settings.music) return;
+
                 // Eğer zaten müzik çalıyorsa yeniden başlatma
                 if (this.musicNodes.length > 0) {
                     return;
@@ -1313,6 +1375,7 @@
             }
 
             playSound(type) {
+                if (!this.settings.effects) return;
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
                 if (type === 'correct') {
@@ -1923,9 +1986,18 @@
                 this.dialogHighlightTimers = [];
             }
 
+            updateReplayButtonState() {
+                const replayBtn = document.getElementById('replayStoryBtn');
+                if (!replayBtn) return;
+                const speechAllowed = this.settings.speech;
+                replayBtn.classList.toggle('hidden', !speechAllowed);
+                replayBtn.disabled = !speechAllowed || !!this.currentSpeech;
+            }
+
             showStoryAndQuestion() {
                 const level = gameData.levels[this.currentLevel];
                 const story = level.stories[this.currentQuestion];
+                this.currentStory = story;
                 const question = this.ensureQuestionMeta(
                     this.currentQuestions[this.currentQuestion],
                     this.currentLevel,
@@ -1980,6 +2052,7 @@
                 });
 
                 this.updateProgress();
+                this.updateReplayButtonState();
 
                 // Seslendirme başlat
                 this.narrateStory(story, () => {
@@ -2008,10 +2081,23 @@
                 const words = speechText.split(' ');
                 const storyTextElement = document.getElementById('storyText');
 
+                if (!this.settings.speech) {
+                    this.currentSpeech = null;
+                    this.renderDialogues(dialogues);
+                    this.clearDialogHighlights();
+                    this.updateReplayButtonState();
+                    if (onComplete) {
+                        setTimeout(onComplete, 300);
+                    }
+                    return;
+                }
+
                 // Sesleri yükle ve en iyi Türkçe sesi seç
                 this.loadVoices().then(voices => {
                     // Web Speech API
                     const speech = new SpeechSynthesisUtterance(speechText);
+                    this.currentSpeech = speech;
+                    this.updateReplayButtonState();
                     
                     // En iyi Türkçe sesi seç - kaliteli ve akıcı olanlar öncelikli
                     const turkishVoice = 
@@ -2079,6 +2165,7 @@
                         this.clearDialogHighlights();
 
                         this.currentSpeech = null;
+                        this.updateReplayButtonState();
 
                         // Müziği normale getir
                         if (this.musicNodes.length > 0) {
@@ -2099,6 +2186,7 @@
                         this.clearDialogHighlights();
                         storyTextElement.innerHTML = this.highlightMathTerms(speechText);
                         this.currentSpeech = null;
+                        this.updateReplayButtonState();
                         
                         // Müziği normale getir
                         if (this.musicNodes.length > 0) {
@@ -2130,6 +2218,13 @@
                             node.gainNode.gain.linearRampToValueAtTime(0.03, this.audioContext.currentTime + 0.5);
                         });
                     }
+                });
+            }
+
+            replayStory() {
+                if (!this.settings.speech || !this.currentStory) return;
+                this.narrateStory(this.currentStory, () => {
+                    document.getElementById('questionCard').style.display = 'block';
                 });
             }
 
