@@ -2974,6 +2974,21 @@
                 const bloomText = this.buildBloomSummaryText();
                 this.renderBloomSummary(bloomText);
 
+                const resultBadge = document.getElementById('resultBadge');
+                if (badge) {
+                    resultBadge.textContent = `${this.getBadgeIcon(badge)} ${badge}`;
+                    resultBadge.classList.remove('hidden');
+                } else {
+                    resultBadge.textContent = '';
+                    resultBadge.classList.add('hidden');
+                }
+
+                const summaryItems = this.buildLearningSummary();
+                this.renderLearningSummary(summaryItems);
+
+                const bloomText = this.buildBloomSummaryText();
+                this.renderBloomSummary(bloomText);
+
                 this.showScreen('resultScreen');
             }
 
