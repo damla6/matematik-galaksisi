@@ -142,6 +142,7 @@
 
                 <div class="question-card" id="questionCard">
                     <div class="question-number" id="questionNumber">Soru 1/5</div>
+                    <div class="question-meta" id="questionMeta" aria-live="polite"></div>
                     <div class="question-text" id="questionText">Soru yükleniyor...</div>
                     <div class="answers-grid" id="answersGrid"></div>
                 </div>
@@ -174,6 +175,8 @@
                             <div class="stat-value" id="timeBonus">+0</div>
                         </div>
                     </div>
+
+                    <div class="bloom-summary hidden" id="bloomSummary" aria-live="polite"></div>
 
                     <div class="learning-summary hidden" id="learningSummary">
                         <h3>Bu seviyede neleri pekiştirdin?</h3>
@@ -268,31 +271,41 @@
                             difficulty: "Kolay",
                             text: "Pozitif bölgede basit bir nokta: Hangisi birinci bölgede (x > 0, y > 0) yer alır?",
                             answers: ["(3, 4)", "(-3, 4)", "(3, -4)", "(-3, -4)"],
-                            correct: 0
+                            correct: 0,
+                            topic: "kadran",
+                            bloomLevel: "bilgi"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "Negatif y içeren nokta: Hangisi dördüncü bölgede (x > 0, y < 0) yer alır?",
                             answers: ["(2, 3)", "(2, -3)", "(-2, -3)", "(-2, 3)"],
-                            correct: 1
+                            correct: 1,
+                            topic: "kadran",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta",
                             text: "Hem negatif x hem negatif y: Hangisi üçüncü bölgede yer alır?",
                             answers: ["(5, 2)", "(-5, 2)", "(5, -2)", "(-5, -2)"],
-                            correct: 3
+                            correct: 3,
+                            topic: "kadran",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "Kesirli koordinatlar: Hangisi doğru kesirli koordinattır?",
                             answers: ["(1.5, 2.5)", "(2, 3)", "(-1, -2)", "(0, 1)"],
-                            correct: 0
+                            correct: 0,
+                            topic: "koordinat",
+                            bloomLevel: "kavrama"
                         },
                         {
                             difficulty: "Zor",
                             text: "Orijin ve eksenlere göre özel nokta: Hangisi y ekseninin üzerinde yer alır?",
                             answers: ["(3, 0)", "(0, 3)", "(3, 3)", "(0, 0)"],
-                            correct: 1
+                            correct: 1,
+                            topic: "orijin",
+                            bloomLevel: "analiz"
                         }
                     ]
                 },
@@ -333,31 +346,41 @@
                             difficulty: "Kolay",
                             text: "Pozitif eğimli tam sayı noktaları: (1, 2) ve (3, 6) noktaları arasındaki eğim kaçtır?",
                             answers: ["1", "2", "3", "4"],
-                            correct: 1
+                            correct: 1,
+                            topic: "egim",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "Negatif eğimli iki nokta: (1, 5) ve (3, 1) noktaları arasındaki eğim kaçtır?",
                             answers: ["2", "-2", "1/2", "-1/2"],
-                            correct: 1
+                            correct: 1,
+                            topic: "egim",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta",
                             text: "Ters işaretli x-y değerleri: (-2, -3) ve (2, 5) noktalarının eğimi?",
                             answers: ["1", "2", "3", "4"],
-                            correct: 1
+                            correct: 1,
+                            topic: "egim",
+                            bloomLevel: "kavrama"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "Kesirli eğim oluşturacak uzak noktalar: (1, 2) ve (5, 5) arasındaki eğim?",
                             answers: ["1/2", "3/4", "2/3", "4/3"],
-                            correct: 1
+                            correct: 1,
+                            topic: "egim",
+                            bloomLevel: "analiz"
                         },
                         {
                             difficulty: "Zor",
                             text: "Eğim tanımsız mı? (3, 2) ve (3, 7) noktaları için eğim nedir?",
                             answers: ["0", "5", "Tanımsız", "-5"],
-                            correct: 2
+                            correct: 2,
+                            topic: "egim",
+                            bloomLevel: "bilgi"
                         }
                     ]
                 },
@@ -398,31 +421,41 @@
                             difficulty: "Kolay",
                             text: "45° açısının eğimi kaçtır?",
                             answers: ["0", "1", "√3", "Tanımsız"],
-                            correct: 1
+                            correct: 1,
+                            topic: "trigonometrik_egim",
+                            bloomLevel: "bilgi"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "0° ve 90° özel durumlar: 0° açısının (yatay doğru) eğimi nedir?",
                             answers: ["0", "1", "∞", "Tanımsız"],
-                            correct: 0
+                            correct: 0,
+                            topic: "trigonometrik_egim",
+                            bloomLevel: "kavrama"
                         },
                         {
                             difficulty: "Orta",
                             text: "30° açısının eğimi hangisidir? (tan 30° = √3/3 ≈ 0.577)",
                             answers: ["0.5", "√3/3", "1", "√3"],
-                            correct: 1
+                            correct: 1,
+                            topic: "trigonometrik_egim",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "60° açısının eğimi hangisidir? (tan 60° = √3 ≈ 1.732)",
                             answers: ["1", "√3/3", "√3", "2"],
-                            correct: 2
+                            correct: 2,
+                            topic: "trigonometrik_egim",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Zor",
                             text: "Negatif açının eğimi: -45° açısı (x ekseninin altında) hangi eğime sahiptir?",
                             answers: ["1", "-1", "0", "Tanımsız"],
-                            correct: 1
+                            correct: 1,
+                            topic: "trigonometrik_egim",
+                            bloomLevel: "analiz"
                         }
                     ]
                 },
@@ -463,31 +496,41 @@
                             difficulty: "Kolay",
                             text: "Nokta (0, b) içeren örnek: y = mx + b denkleminde, doğru (0, 5) noktasından geçiyorsa b kaçtır?",
                             answers: ["0", "5", "m", "x"],
-                            correct: 1
+                            correct: 1,
+                            topic: "dogru_denklemi",
+                            bloomLevel: "bilgi"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "Tam sayılı eğim ve nokta: Eğimi 3 olan ve (1, 7) noktasından geçen doğru için b?",
                             answers: ["3", "4", "7", "10"],
-                            correct: 1
+                            correct: 1,
+                            topic: "dogru_denklemi",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta",
                             text: "Negatif eğim + tam sayı nokta: Eğimi -2 olan ve (3, 4) noktasından geçen doğru için b?",
                             answers: ["6", "8", "10", "12"],
-                            correct: 2
+                            correct: 2,
+                            topic: "dogru_denklemi",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "Kesirli eğim + tam sayı nokta: Eğimi 1/2 olan ve (4, 5) noktasından geçen doğru için b?",
                             answers: ["1", "2", "3", "4"],
-                            correct: 2
+                            correct: 2,
+                            topic: "dogru_denklemi",
+                            bloomLevel: "kavrama"
                         },
                         {
                             difficulty: "Zor",
                             text: "Denklemi b'ye göre çözme: y = -3x + b denklemi (2, 1) noktasından geçiyorsa b kaçtır?",
                             answers: ["5", "6", "7", "8"],
-                            correct: 2
+                            correct: 2,
+                            topic: "dogru_denklemi",
+                            bloomLevel: "analiz"
                         }
                     ]
                 },
@@ -528,31 +571,41 @@
                             difficulty: "Kolay",
                             text: "Aynı eğim – farklı b (paralel): y = 3x + 2 ve y = 3x - 5 doğruları?",
                             answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
-                            correct: 0
+                            correct: 0,
+                            topic: "paralellik",
+                            bloomLevel: "bilgi"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "Farklı eğim – kesişir: y = 2x + 1 ve y = -x + 4 doğruları?",
                             answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
-                            correct: 1
+                            correct: 1,
+                            topic: "paralellik",
+                            bloomLevel: "kavrama"
                         },
                         {
                             difficulty: "Orta",
                             text: "Aynı doğru – çakışık: y = 4x + 2 ve 2y = 8x + 4 doğruları?",
                             answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
-                            correct: 2
+                            correct: 2,
+                            topic: "paralellik",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "Eğim bulmayı gerektiren: 2y = 6x + 4 ve y = 3x - 1 doğruları?",
                             answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
-                            correct: 0
+                            correct: 0,
+                            topic: "paralellik",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Zor",
                             text: "Eğim ve b karşılaştırması: 3y = 9x + 6 ve y = 3x + 2 doğruları?",
                             answers: ["Paralel", "Kesişir", "Çakışık", "Dik"],
-                            correct: 2
+                            correct: 2,
+                            topic: "paralellik",
+                            bloomLevel: "analiz"
                         }
                     ]
                 },
@@ -593,31 +646,41 @@
                             difficulty: "Kolay",
                             text: "m=2 için dik eğim: Eğimi 2 olan doğruya dik olan doğrunun eğimi?",
                             answers: ["2", "-2", "1/2", "-1/2"],
-                            correct: 3
+                            correct: 3,
+                            topic: "diklik",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "Negatif m için dik eğim: Eğimi -4 olan doğruya dik doğrunun eğimi?",
                             answers: ["4", "-4", "1/4", "-1/4"],
-                            correct: 2
+                            correct: 2,
+                            topic: "diklik",
+                            bloomLevel: "kavrama"
                         },
                         {
                             difficulty: "Orta",
                             text: "Kesirli eğimde dik eğim: Eğimi 3/4 olan doğruya dik doğrunun eğimi?",
                             answers: ["3/4", "-3/4", "4/3", "-4/3"],
-                            correct: 3
+                            correct: 3,
+                            topic: "diklik",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "0 eğime dik eğim: Yatay doğruya (m = 0) dik olan doğrunun eğimi?",
                             answers: ["0", "1", "Tanımsız", "-1"],
-                            correct: 2
+                            correct: 2,
+                            topic: "diklik",
+                            bloomLevel: "bilgi"
                         },
                         {
                             difficulty: "Zor",
                             text: "x=k doğrularla diklik: x = 3 şeklindeki düşey doğruya dik olan doğru nasıldır?",
                             answers: ["Düşey (x=k)", "Yatay (y=k)", "Eğik", "Olamaz"],
-                            correct: 1
+                            correct: 1,
+                            topic: "diklik",
+                            bloomLevel: "analiz"
                         }
                     ]
                 },
@@ -658,31 +721,41 @@
                             difficulty: "Kolay",
                             text: "y=mx grafiğinde zaman-yol: Bir araç 50 km/saat hızla gidiyor. 4 saatte kaç km yol alır? (y = 50x)",
                             answers: ["150 km", "200 km", "250 km", "300 km"],
-                            correct: 1
+                            correct: 1,
+                            topic: "hiz_orani",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Kolay-Orta",
                             text: "Azalan doğru: Bir depo 120 litre suyla dolu ve saatte 15 litre boşalıyor. 4 saat sonra kaç litre kalır? (y = 120 - 15x)",
                             answers: ["50", "60", "70", "80"],
-                            correct: 1
+                            correct: 1,
+                            topic: "hiz_orani",
+                            bloomLevel: "uygulama"
                         },
                         {
                             difficulty: "Orta",
                             text: "Grafikten eğim okuma: Bir doğru (0, 0) ve (5, 15) noktalarından geçiyor. Eğimi kaçtır?",
                             answers: ["2", "3", "4", "5"],
-                            correct: 1
+                            correct: 1,
+                            topic: "grafik",
+                            bloomLevel: "bilgi"
                         },
                         {
                             difficulty: "Orta-Zor",
                             text: "İki grafiği karşılaştırma: y = 2x ve y = 5x grafiklerinden hangisi daha diktir?",
                             answers: ["y = 2x", "y = 5x", "İkisi eşit", "Belirlenemez"],
-                            correct: 1
+                            correct: 1,
+                            topic: "grafik",
+                            bloomLevel: "analiz"
                         },
                         {
                             difficulty: "Zor",
                             text: "Grafikten hız çıkarma: Grafik (0, 10) noktasından başlıyor ve eğimi 6. x = 3 için y değeri kaçtır?",
                             answers: ["24", "26", "28", "30"],
-                            correct: 2
+                            correct: 2,
+                            topic: "hiz_orani",
+                            bloomLevel: "kavrama"
                         }
                     ]
                 }
@@ -692,6 +765,8 @@
         const questionMeta = {
             1: [
                 {
+                    topic: 'kadran',
+                    bloomLevel: 'bilgi',
                     tags: ['kadran', 'koordinat sistemi'],
                     explanation: {
                         correct: 'Birinci kadranda hem x hem y değeri pozitiftir; iki işaretin de + olması doğru noktayı gösterir.',
@@ -699,6 +774,8 @@
                     }
                 },
                 {
+                    topic: 'kadran',
+                    bloomLevel: 'uygulama',
                     tags: ['kadran', 'negatif y'],
                     explanation: {
                         correct: 'Dördüncü kadranda x pozitiftir, y negatiftir; oklar aşağı doğruya yönelir.',
@@ -706,6 +783,8 @@
                     }
                 },
                 {
+                    topic: 'kadran',
+                    bloomLevel: 'uygulama',
                     tags: ['kadran', 'negatif'],
                     explanation: {
                         correct: 'Üçüncü kadranda her iki değer de negatiftir; (-x, -y) noktaları burada yaşar.',
@@ -713,6 +792,8 @@
                     }
                 },
                 {
+                    topic: 'koordinat',
+                    bloomLevel: 'kavrama',
                     tags: ['kesirli', 'kadran'],
                     explanation: {
                         correct: 'Kesirli koordinatlar da aynı kuralı izler: x ve y’nin işaretine göre kadran belirlenir.',
@@ -720,6 +801,8 @@
                     }
                 },
                 {
+                    topic: 'orijin',
+                    bloomLevel: 'analiz',
                     tags: ['y ekseni', 'orijin'],
                     explanation: {
                         correct: 'Y ekseni üzerindeki noktaların x değeri 0’dır; (0, y) formunu aradın ve buldun.',
@@ -729,6 +812,8 @@
             ],
             2: [
                 {
+                    topic: 'egim',
+                    bloomLevel: 'uygulama',
                     tags: ['eğim', 'oran'],
                     explanation: {
                         correct: 'Eğim, y değişiminin x değişimine oranıdır; (y2−y1)/(x2−x1) ile pozitif artışı okudun.',
@@ -736,6 +821,8 @@
                     }
                 },
                 {
+                    topic: 'egim',
+                    bloomLevel: 'uygulama',
                     tags: ['eğim', 'negatif eğim'],
                     explanation: {
                         correct: 'Yukarıdan aşağıya inen doğrularda y azalır; oran negatif olur ve bu seçimi yaptın.',
@@ -743,6 +830,8 @@
                     }
                 },
                 {
+                    topic: 'egim',
+                    bloomLevel: 'kavrama',
                     tags: ['eğim', 'karışık işaret'],
                     explanation: {
                         correct: 'İşaretler karışık olsa da formül aynı; y farkını x farkına böldüğünde eğimi yakaladın.',
@@ -750,6 +839,8 @@
                     }
                 },
                 {
+                    topic: 'egim',
+                    bloomLevel: 'analiz',
                     tags: ['eğim', 'kesir'],
                     explanation: {
                         correct: 'Farklar küçük olsa da eğim yine bölme ile bulunur; kesirli değeri doğru okudun.',
@@ -757,6 +848,8 @@
                     }
                 },
                 {
+                    topic: 'egim',
+                    bloomLevel: 'bilgi',
                     tags: ['tanımsız', 'dikey doğru'],
                     explanation: {
                         correct: 'x farkı 0 olduğunda dikey doğru oluşur ve eğim tanımsızdır; payda olmadığı için sonuç olmaz.',
@@ -766,6 +859,8 @@
             ],
             3: [
                 {
+                    topic: 'trigonometrik_egim',
+                    bloomLevel: 'bilgi',
                     tags: ['açı', 'eğim'],
                     explanation: {
                         correct: '45° için tan θ = 1’dir; eğim 1 olduğunda doğru köşegen olur.',
@@ -773,6 +868,8 @@
                     }
                 },
                 {
+                    topic: 'trigonometrik_egim',
+                    bloomLevel: 'kavrama',
                     tags: ['yatay doğru', 'açı'],
                     explanation: {
                         correct: '0°’lik yatay doğrunun eğimi 0’dır; y değişimi olmadığından oran sıfır olur.',
@@ -780,6 +877,8 @@
                     }
                 },
                 {
+                    topic: 'trigonometrik_egim',
+                    bloomLevel: 'uygulama',
                     tags: ['trigonometri', 'kesirli eğim'],
                     explanation: {
                         correct: '30°’nin tan değeri √3/3’tür; hafif eğimli yolu doğru yorumladın.',
@@ -787,6 +886,8 @@
                     }
                 },
                 {
+                    topic: 'trigonometrik_egim',
+                    bloomLevel: 'uygulama',
                     tags: ['trigonometri', 'dik eğim'],
                     explanation: {
                         correct: '60° tan değeri √3’tür; eğimin büyümesi doğrunun dikleştiğini gösterir.',
@@ -794,6 +895,8 @@
                     }
                 },
                 {
+                    topic: 'trigonometrik_egim',
+                    bloomLevel: 'analiz',
                     tags: ['açı', 'negatif eğim'],
                     explanation: {
                         correct: '-45° için tan değerinin -1 olması, doğruyun aşağı doğru gittiğini anlatır.',
@@ -803,6 +906,8 @@
             ],
             4: [
                 {
+                    topic: 'dogru_denklemi',
+                    bloomLevel: 'bilgi',
                     tags: ['doğru denklemi', 'y ekseni'],
                     explanation: {
                         correct: 'y = mx + b denkleminde (0,b) noktası doğrunun y eksenini kestiği yerdir; b doğrudan okunur.',
@@ -810,6 +915,8 @@
                     }
                 },
                 {
+                    topic: 'dogru_denklemi',
+                    bloomLevel: 'uygulama',
                     tags: ['eğim', 'b değeri'],
                     explanation: {
                         correct: 'Bilinen nokta ve eğimle b bulunur: y = mx + b denkleminde yerine koyup b’yi çözdün.',
@@ -817,6 +924,8 @@
                     }
                 },
                 {
+                    topic: 'dogru_denklemi',
+                    bloomLevel: 'uygulama',
                     tags: ['negatif eğim', 'doğru denklemi'],
                     explanation: {
                         correct: 'Negatif eğim olsa da yöntem aynı; verilen nokta üzerinden b değerini izole ettin.',
@@ -824,6 +933,8 @@
                     }
                 },
                 {
+                    topic: 'dogru_denklemi',
+                    bloomLevel: 'kavrama',
                     tags: ['kesirli eğim', 'b değeri'],
                     explanation: {
                         correct: 'Kesirli eğimde de b’yi bulmak için x ve y’yi yerine koyup toplama-çıkarma yaptın.',
@@ -831,6 +942,8 @@
                     }
                 },
                 {
+                    topic: 'dogru_denklemi',
+                    bloomLevel: 'analiz',
                     tags: ['doğru denklemi', 'işlemsel çözüm'],
                     explanation: {
                         correct: 'Verilen nokta ve eğimle b’yi çözdün; y = mx + b formatı seni doğru sonuca götürdü.',
@@ -840,6 +953,8 @@
             ],
             5: [
                 {
+                    topic: 'paralellik',
+                    bloomLevel: 'bilgi',
                     tags: ['paralel', 'eğim'],
                     explanation: {
                         correct: 'Paralel doğruların eğimleri aynıdır; b farklıysa doğrular hiç kesişmez.',
@@ -847,6 +962,8 @@
                     }
                 },
                 {
+                    topic: 'paralellik',
+                    bloomLevel: 'kavrama',
                     tags: ['kesişim', 'eğim'],
                     explanation: {
                         correct: 'Eğimler farklıysa doğrular bir noktada kesişir; bunu fark ettin.',
@@ -854,6 +971,8 @@
                     }
                 },
                 {
+                    topic: 'paralellik',
+                    bloomLevel: 'uygulama',
                     tags: ['çakışık', 'doğru denklemi'],
                     explanation: {
                         correct: 'Eğim ve b aynıysa doğrular üst üste biner; tüm noktaları paylaşırlar.',
@@ -861,6 +980,8 @@
                     }
                 },
                 {
+                    topic: 'paralellik',
+                    bloomLevel: 'uygulama',
                     tags: ['paralel', 'sadeleştirme'],
                     explanation: {
                         correct: 'Denklemi sadeleştirince eğimlerin eşit olduğunu gördün; b’ler farklıysa paralellik korunur.',
@@ -868,6 +989,8 @@
                     }
                 },
                 {
+                    topic: 'paralellik',
+                    bloomLevel: 'analiz',
                     tags: ['çakışık', 'eşdeğer denklem'],
                     explanation: {
                         correct: 'Her iki denklem de aynı formu verdi; bu yüzden doğrular çakışık.',
@@ -877,6 +1000,8 @@
             ],
             6: [
                 {
+                    topic: 'diklik',
+                    bloomLevel: 'uygulama',
                     tags: ['dik', 'eğim'],
                     explanation: {
                         correct: 'Dik doğruların eğimleri çarpıldığında -1 çıkar; 2 ile -1/2 çarpımı tam da bunu verir.',
@@ -884,6 +1009,8 @@
                     }
                 },
                 {
+                    topic: 'diklik',
+                    bloomLevel: 'kavrama',
                     tags: ['dik', 'negatif eğim'],
                     explanation: {
                         correct: 'Negatif eğimin dik karşılığı işaret değiştirip ters çevrilir; -4 → 1/4 ilişkisini gördün.',
@@ -891,6 +1018,8 @@
                     }
                 },
                 {
+                    topic: 'diklik',
+                    bloomLevel: 'uygulama',
                     tags: ['dik', 'kesirli'],
                     explanation: {
                         correct: 'Kesirli eğimde de çarpım -1 kuralı geçerli; 3/4’ün dik partneri -4/3’tür.',
@@ -898,6 +1027,8 @@
                     }
                 },
                 {
+                    topic: 'diklik',
+                    bloomLevel: 'bilgi',
                     tags: ['yatay doğru', 'tanımsız'],
                     explanation: {
                         correct: 'Yatay doğruya dik olan doğru düşeydir; x sabittir ve eğim tanımsızdır.',
@@ -905,6 +1036,8 @@
                     }
                 },
                 {
+                    topic: 'diklik',
+                    bloomLevel: 'analiz',
                     tags: ['dik', 'koordinat sistemi'],
                     explanation: {
                         correct: 'Düşey doğruya dik olan doğrular yataydır; y = k formu ile x eksenine paralel gider.',
@@ -914,6 +1047,8 @@
             ],
             7: [
                 {
+                    topic: 'hiz_orani',
+                    bloomLevel: 'uygulama',
                     tags: ['grafik', 'oran'],
                     explanation: {
                         correct: 'y = 50x, her saat 50 km demektir; 4 saatte 4×50 = 200 km’ye ulaştın.',
@@ -921,6 +1056,8 @@
                     }
                 },
                 {
+                    topic: 'hiz_orani',
+                    bloomLevel: 'uygulama',
                     tags: ['azalma', 'grafik'],
                     explanation: {
                         correct: 'Her saat 15 litre azalınca 4 saatte 60 litre gider; 120−60 = 60 litrelik sonucu yakaladın.',
@@ -928,6 +1065,8 @@
                     }
                 },
                 {
+                    topic: 'grafik',
+                    bloomLevel: 'bilgi',
                     tags: ['eğim', 'grafik okuma'],
                     explanation: {
                         correct: 'Eğim, iki nokta arasındaki değişim oranıdır; (0,0)-(5,15) için 15/5 = 3 buldun.',
@@ -935,6 +1074,8 @@
                     }
                 },
                 {
+                    topic: 'grafik',
+                    bloomLevel: 'analiz',
                     tags: ['karşılaştırma', 'eğim'],
                     explanation: {
                         correct: 'Eğim büyüdükçe doğru dikleşir; 5 eğimi 2’den büyüktür, bu yüzden y = 5x daha diktir.',
@@ -942,6 +1083,8 @@
                     }
                 },
                 {
+                    topic: 'hiz_orani',
+                    bloomLevel: 'kavrama',
                     tags: ['grafik', 'doğru denklemi'],
                     explanation: {
                         correct: 'Başlangıç değeri 10 ve eğim 6 ise y = 6x + 10; x=3 için 6×3 + 10 = 28’i hesapladın.',
@@ -990,6 +1133,8 @@
                 level.questions.forEach((question, index) => {
                     const meta = metaList[index] || {};
                     question.tags = question.tags || meta.tags || [];
+                    question.topic = question.topic || meta.topic || '';
+                    question.bloomLevel = question.bloomLevel || meta.bloomLevel || '';
                     question.explanation = question.explanation || meta.explanation || {
                         correct: 'Doğru adımları yakaladın; aynı mantıkla ilerlemeye devam et.',
                         wrong: 'Bir dahaki sefer kavramın temel tanımına odaklanarak işaretleri ve oranı birlikte düşünmeyi dene.'
@@ -1037,6 +1182,9 @@
                 this.dialogHighlightTimers = [];
                 this.metaMap = questionMeta;
                 this.conceptBlurbs = conceptBlurbs;
+                this.bloomTargets = {
+                    5: { bilgi: 1, kavrama: 1, uygulama: 2, analiz: 1 }
+                };
                 this.ambientAnimationFrame = null;
                 this.lastAmbientTick = 0;
 
@@ -1194,15 +1342,77 @@
                 return pool;
             }
 
+            shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            buildBloomMixedSet(pool, desiredCounts) {
+                if (!pool || pool.length === 0) return null;
+                const targetLength = pool[0]?.length || 0;
+                if (!targetLength) return null;
+
+                const flat = pool.flat().map((q, idx) => ({...q, _poolIndex: idx}));
+                this.shuffleArray(flat);
+
+                const remaining = {};
+                Object.entries(desiredCounts).forEach(([key, value]) => {
+                    remaining[key.toLowerCase()] = value;
+                });
+
+                const picked = [];
+                const used = new Set();
+
+                for (const q of flat) {
+                    const bloomKey = (q.bloomLevel || '').toLowerCase();
+                    if (remaining[bloomKey] > 0) {
+                        picked.push(q);
+                        used.add(q._poolIndex);
+                        remaining[bloomKey] -= 1;
+                    }
+                }
+
+                if (Object.values(remaining).some(count => count > 0)) {
+                    return null; // İstenen dağılım yoksa havuza bırak
+                }
+
+                for (const q of flat) {
+                    if (picked.length >= targetLength) break;
+                    if (used.has(q._poolIndex)) continue;
+                    picked.push(q);
+                }
+
+                return picked.slice(0, targetLength).map(q => {
+                    const clone = {...q};
+                    delete clone._poolIndex;
+                    return clone;
+                });
+            }
+
             selectQuestionsFromPool(levelIndex) {
                 const poolKey = `level${levelIndex + 1}`;
                 const pool = this.questionPools[poolKey];
-                
-                // Rastgele bir set seç
-                const randomIndex = Math.floor(Math.random() * pool.length);
-                this.currentQuestions = pool[randomIndex];
-                
-                console.log(`🎲 Seviye ${levelIndex + 1} için ${randomIndex + 1}. soru seti seçildi`);
+
+                if (!pool || pool.length === 0) {
+                    console.warn(`⚠️ Seviye ${levelIndex + 1} için soru havuzu bulunamadı`);
+                    this.currentQuestions = [];
+                    return;
+                }
+
+                const desired = this.bloomTargets[pool?.[0]?.length || 0];
+                const mixedSet = desired ? this.buildBloomMixedSet(pool, desired) : null;
+
+                if (mixedSet && mixedSet.length) {
+                    this.currentQuestions = mixedSet;
+                    console.log(`🎯 Seviye ${levelIndex + 1} için Bloom dengeli set oluşturuldu`);
+                } else {
+                    const randomIndex = Math.floor(Math.random() * pool.length);
+                    this.currentQuestions = pool[randomIndex];
+                    console.log(`🎲 Seviye ${levelIndex + 1} için ${randomIndex + 1}. soru seti seçildi (varsayılan)`);
+                }
+
             }
 
             initStars() {
@@ -1723,6 +1933,22 @@
                 this.renderLevelSelect();
             }
 
+            getLevelBloomFocus(level) {
+                if (!level || !level.questions) return '';
+                const counts = {};
+                level.questions.forEach(q => {
+                    const label = this.formatBloomLabel(q.bloomLevel);
+                    if (!label) return;
+                    counts[label] = (counts[label] || 0) + 1;
+                });
+
+                const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+                if (sorted.length === 0) return '';
+
+                const topTwo = sorted.slice(0, 2).map(entry => entry[0]);
+                return `Odak: ${topTwo.join(' + ')}`;
+            }
+
             stopActiveLoops() {
                 if (this.timer) {
                     clearInterval(this.timer);
@@ -1758,6 +1984,7 @@
                     const badgeIcon = level.badge ? this.getBadgeIcon(level.badge) : '';
                     const status = this.completedLevels.has(index + 1) ? '✅' :
                                    isLocked ? '🔒' : '⭐';
+                    const bloomFocus = this.getLevelBloomFocus(level);
 
                     card.innerHTML = `
                         <div class="level-meta">
@@ -1769,6 +1996,7 @@
                         <div class="level-title">${level.title}</div>
                         <div class="level-info">⏱️ ${Math.floor(level.time / 60)} dakika</div>
                         <div class="level-info">📝 ${level.questions.length} Soru</div>
+                        ${bloomFocus ? `<div class="level-bloom">${bloomFocus}</div>` : ''}
                     `;
 
                     if (!isLocked) {
@@ -1970,6 +2198,37 @@
                 return highlighted;
             }
 
+            formatTopicLabel(topic) {
+                if (!topic) return '';
+                const map = {
+                    egim: 'Eğim',
+                    dogru_denklemi: 'Doğru Denklemi',
+                    kadran: 'Kadran',
+                    paralellik: 'Paralellik',
+                    diklik: 'Diklik',
+                    grafik: 'Grafik Okuma',
+                    trigonometrik_egim: 'Açı-Eğim',
+                    koordinat: 'Koordinat',
+                    orijin: 'Orijin',
+                    hiz_orani: 'Hız-Oran',
+                    sekil: 'Şekil',
+                    oran: 'Oran'
+                };
+                return map[topic] || topic;
+            }
+
+            formatBloomLabel(level) {
+                if (!level) return '';
+                const normalized = level.toLowerCase();
+                const map = {
+                    bilgi: 'Bilgi',
+                    kavrama: 'Kavrama',
+                    uygulama: 'Uygulama',
+                    analiz: 'Analiz'
+                };
+                return map[normalized] || level;
+            }
+
             getQuestionMeta(levelIndex, questionIndex) {
                 return (this.metaMap[levelIndex + 1] && this.metaMap[levelIndex + 1][questionIndex]) || {};
             }
@@ -1980,6 +2239,14 @@
 
                 if (!enriched.tags || enriched.tags.length === 0) {
                     enriched.tags = baseMeta.tags ? [...baseMeta.tags] : [];
+                }
+
+                if (!enriched.topic) {
+                    enriched.topic = baseMeta.topic || '';
+                }
+
+                if (!enriched.bloomLevel) {
+                    enriched.bloomLevel = baseMeta.bloomLevel || '';
                 }
 
                 if (!enriched.explanation) {
@@ -2056,6 +2323,35 @@
                     .map(text => `<li>${this.highlightMathTerms(text)}</li>`)
                     .join('');
                 wrapper.classList.remove('hidden');
+            }
+
+            buildBloomSummaryText() {
+                const counts = {};
+                this.currentQuestions.forEach(q => {
+                    const label = this.formatBloomLabel(q.bloomLevel);
+                    if (!label) return;
+                    counts[label] = (counts[label] || 0) + 1;
+                });
+
+                const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+                if (entries.length === 0) return '';
+
+                const fragments = entries.map(([label, value]) => `${value} ${label}`);
+                return `Bu seviyede ${fragments.join(', ')} sorusu çözdün.`;
+            }
+
+            renderBloomSummary(text) {
+                const panel = document.getElementById('bloomSummary');
+                if (!panel) return;
+
+                if (!text) {
+                    panel.textContent = '';
+                    panel.classList.add('hidden');
+                    return;
+                }
+
+                panel.textContent = text;
+                panel.classList.remove('hidden');
             }
 
             buildDialogues(story) {
@@ -2141,6 +2437,15 @@
 
                 document.getElementById('questionNumber').textContent =
                     `Soru ${questionNum}/${this.currentQuestions.length} • ${difficulty}`;
+                const topicLabel = this.formatTopicLabel(question.topic);
+                const bloomLabel = this.formatBloomLabel(question.bloomLevel);
+                const metaLine = [
+                    topicLabel ? `Konu: ${topicLabel}` : null,
+                    bloomLabel ? `Düzey: ${bloomLabel}` : null
+                ].filter(Boolean).join(' | ');
+                const metaEl = document.getElementById('questionMeta');
+                metaEl.textContent = metaLine;
+                metaEl.classList.toggle('hidden', !metaLine);
                 document.getElementById('questionText').innerHTML = this.highlightMathTerms(question.text);
 
                 const answersGrid = document.getElementById('answersGrid');
@@ -2592,6 +2897,9 @@
 
                 const summaryItems = this.buildLearningSummary();
                 this.renderLearningSummary(summaryItems);
+
+                const bloomText = this.buildBloomSummaryText();
+                this.renderBloomSummary(bloomText);
 
                 this.showScreen('resultScreen');
             }
