@@ -222,6 +222,8 @@
                         </div>
                     </div>
 
+                    <div class="final-theme-summary" id="finalThemeSummary"></div>
+
                     <button class="btn btn-primary" onclick="game.playSound('click'); game.restart()">
                         Yeniden Oyna 🔄
                     </button>
@@ -760,6 +762,16 @@
                     ]
                 }
             ]
+        };
+
+        const levelThemes = {
+            1: { name: "Eğim Galaksisi", primaryColor: "#38bdf8", secondaryColor: "#0f172a", icon: "📈", backgroundClass: "theme-slope" },
+            2: { name: "Koordinat Sektörü", primaryColor: "#22c55e", secondaryColor: "#0c1725", icon: "🧭", backgroundClass: "theme-quadrant" },
+            3: { name: "Açı Tünelleri", primaryColor: "#a855f7", secondaryColor: "#1a0b2e", icon: "📐", backgroundClass: "theme-angle" },
+            4: { name: "Paralel Koridor", primaryColor: "#f59e0b", secondaryColor: "#1c1305", icon: "⚡", backgroundClass: "theme-parallel" },
+            5: { name: "Kesim Köprüsü", primaryColor: "#22d3ee", secondaryColor: "#07131c", icon: "🌉", backgroundClass: "theme-intersect" },
+            6: { name: "Analitik Yörünge", primaryColor: "#ef4444", secondaryColor: "#1a0a0a", icon: "🛰", backgroundClass: "theme-orbit" },
+            7: { name: "Gerçeklik Çekirdeği", primaryColor: "#14b8a6", secondaryColor: "#041b14", icon: "🌌", backgroundClass: "theme-core" }
         };
 
         const questionMeta = {
@@ -1933,6 +1945,10 @@
                 this.renderLevelSelect();
             }
 
+            getLevelTheme(levelId) {
+                return levelThemes[levelId] || null;
+            }
+
             getLevelBloomFocus(level) {
                 if (!level || !level.questions) return '';
                 const counts = {};
@@ -1976,6 +1992,7 @@
                     const card = document.createElement('div');
                     card.className = 'level-card';
 
+                    const theme = this.getLevelTheme(level.id);
                     const isLocked = index > 0 && !this.completedLevels.has(index);
                     if (isLocked) {
                         card.classList.add('locked');
@@ -1986,11 +2003,20 @@
                                    isLocked ? '🔒' : '⭐';
                     const bloomFocus = this.getLevelBloomFocus(level);
 
+                    if (theme?.primaryColor) {
+                        card.style.setProperty('--level-accent', theme.primaryColor);
+                    }
+
                     card.innerHTML = `
                         <div class="level-meta">
                             ${badgeIcon ? `<span class="level-badge-mini" title="${level.badge}">${badgeIcon}</span>` : ''}
                             ${this.completedLevels.has(index + 1) ? '<span class="level-complete-tick" title="Tamamlandı">✔</span>' : ''}
                         </div>
+                        ${theme ? `<div class="level-theme-tag" aria-label="${theme.name}">
+                            <span class="theme-strip" aria-hidden="true"></span>
+                            <span class="theme-icon">${theme.icon || '⭐'}</span>
+                            <span class="theme-name">${theme.name}</span>
+                        </div>` : ''}
                         <div class="level-status">${status}</div>
                         <div class="level-number">${level.id}</div>
                         <div class="level-title">${level.title}</div>
@@ -2073,20 +2099,25 @@
             }
 
             applyLevelTheme(levelIndex) {
-                // Önceki temaları temizle
                 const keepLowPerf = document.body.classList.contains('low-perf');
                 document.body.className = '';
                 if (keepLowPerf) document.body.classList.add('low-perf');
 
-                // Yeni tema ekle
-                document.body.classList.add(`level-${levelIndex + 1}`);
-                
-                // Partiküller ekle
+                const theme = this.getLevelTheme(levelIndex + 1);
+                const levelClass = `level-${levelIndex + 1}`;
+                document.body.classList.add(levelClass);
+                if (theme?.backgroundClass) {
+                    document.body.classList.add(theme.backgroundClass);
+                }
+
+                const root = document.documentElement;
+                root.style.setProperty('--theme-primary', theme?.primaryColor || '#38bdf8');
+                root.style.setProperty('--theme-secondary', theme?.secondaryColor || '#0f172a');
+
                 this.clearParticles();
                 this.createLevelParticles(levelIndex + 1);
-                
-                // Yıldızları güncelle
-                this.updateStars(levelIndex + 1);
+
+                this.updateStars(levelIndex + 1, theme);
             }
 
             clearParticles() {
@@ -2109,23 +2140,24 @@
                 }
             }
 
-            updateStars(levelNum) {
+            updateStars(levelNum, themeConfig) {
                 const stars = document.querySelectorAll('.star');
                 const colors = {
-                    1: '#64b5f6',  // Mavi - Harita
-                    2: '#81c784',  // Yeşil - Dağlar
-                    3: '#ba68c8',  // Mor - Tüneller
-                    4: '#ffb74d',  // Turuncu - Tapınak
-                    5: '#4fc3f7',  // Açık mavi - Köprüler
-                    6: '#e57373',  // Kırmızı - Savaş
-                    7: '#4db6ac'   // Turkuaz - Gerçeklik
+                    1: '#64b5f6',
+                    2: '#81c784',
+                    3: '#ba68c8',
+                    4: '#ffb74d',
+                    5: '#4fc3f7',
+                    6: '#e57373',
+                    7: '#4db6ac'
                 };
+                const preferred = themeConfig?.primaryColor || colors[levelNum] || 'white';
 
                 stars.forEach((star, index) => {
-                    star.style.background = colors[levelNum] || 'white';
+                    star.style.background = preferred;
                     star.style.boxShadow = this.settings.lowPerf
-                        ? `0 0 4px ${colors[levelNum] || 'white'}`
-                        : `0 0 10px ${colors[levelNum] || 'white'}`;
+                        ? `0 0 4px ${preferred}`
+                        : `0 0 10px ${preferred}`;
 
                     if (!this.settings.lowPerf && index % 12 === 0) {
                         star.classList.add('shooting');
@@ -2137,9 +2169,9 @@
 
             updateLevelInfo() {
                 const level = gameData.levels[this.currentLevel];
-                const icons = ['🗺️', '⛰️', '🌀', '🏛️', '🌉', '⚔️', '🎮'];
-                const icon = icons[this.currentLevel] || '⭐';
-                
+                const theme = this.getLevelTheme(level.id);
+                const icon = theme?.icon || '⭐';
+
                 const titleElement = document.getElementById('currentLevelTitle');
                 titleElement.textContent = `Seviye ${level.id}: ${level.title}`;
                 titleElement.setAttribute('data-icon', icon);
@@ -2915,6 +2947,15 @@
             showFinal() {
                 document.getElementById('finalScore').textContent = this.totalScore;
                 document.getElementById('finalCorrect').textContent = this.totalCorrect + '/35';
+                const summary = document.getElementById('finalThemeSummary');
+                if (summary) {
+                    summary.innerHTML = gameData.levels.map((level) => {
+                        const theme = this.getLevelTheme(level.id);
+                        const icon = theme?.icon || '⭐';
+                        const label = theme?.name || level.title;
+                        return `<div class="final-theme-row">${icon} Seviye ${level.id}: ${label}</div>`;
+                    }).join('');
+                }
                 this.showScreen('finalScreen');
             }
 
