@@ -16,6 +16,10 @@
             transition: all 0.8s ease;
         }
 
+        .hidden {
+            display: none !important;
+        }
+
         /* Ana menü arka planı - Uzay */
         body::before {
             content: '';
@@ -485,6 +489,10 @@
             75% { transform: translateX(10px); }
         }
 
+        .shake {
+            animation: shake 0.6s ease;
+        }
+
         @keyframes correct {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); }
@@ -570,6 +578,64 @@
             letter-spacing: 10px;
             font-weight: 700;
             animation: neonFlicker 3s ease-in-out infinite;
+        }
+
+        .hero-intro {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 255, 0.35);
+            border-radius: 20px;
+            padding: 18px 20px;
+            max-width: 780px;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .intro-kicker {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            letter-spacing: 1px;
+            color: #d0e8ff;
+            margin-bottom: 6px;
+        }
+
+        .intro-lead {
+            font-size: clamp(1.2rem, 3.4vw, 1.5rem);
+            line-height: 1.65;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .collapsible-intro {
+            max-width: 820px;
+            margin: 0 auto 26px auto;
+            text-align: left;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .collapse-toggle {
+            width: 100%;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), rgba(123, 47, 247, 0.2));
+            color: #e2f4ff;
+            border: none;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .collapse-toggle:hover {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.32), rgba(123, 47, 247, 0.32));
+            color: #ffffff;
+        }
+
+        .collapse-panel {
+            padding: 12px 20px 18px 20px;
+            background: rgba(0, 0, 0, 0.55);
         }
 
         @keyframes neonFlicker {
@@ -833,6 +899,9 @@
         /* Oyun Ekranı */
         .game-screen {
             animation: fadeIn 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
         }
 
         .game-header {
@@ -935,12 +1004,18 @@
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(30px);
             border-radius: 30px;
-            padding: 50px;
-            margin: 35px 0;
+            padding: clamp(32px, 3vw, 50px);
+            margin: 0;
             border: 4px solid;
             position: relative;
             overflow: hidden;
             animation: storyMegaGlow 2s ease-in-out infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            max-height: min(48vh, 560px);
+            width: 100%;
         }
 
         .story-card::before {
@@ -1069,22 +1144,40 @@
 
         .story-text {
             font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
-            line-height: 2.2;
+            font-size: clamp(1.05rem, 3vw, 1.5rem);
+            line-height: 1.8;
             color: #ffffff;
-            text-align: center;
-            font-style: italic;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 4px 15px rgba(0, 0, 0, 0.9);
-            padding: 0 30px 60px 30px;
+            text-align: left;
+            font-style: normal;
+            padding: 12px 24px 16px 24px;
             font-weight: 600;
             position: relative;
             z-index: 1;
-            min-height: 120px;
-            max-height: 300px;
+            min-height: 140px;
+            max-height: clamp(260px, 34vh, 400px);
             overflow-y: auto;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .hint-bar {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin: clamp(10px, 2vw, 18px) 0 clamp(6px, 1.5vw, 14px);
+        }
+
+        .hint-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
+            color: #111;
+            border-color: #ffd93d;
+            box-shadow: 0 10px 25px rgba(255, 217, 61, 0.3);
         }
 
         .story-text::-webkit-scrollbar {
@@ -1103,6 +1196,54 @@
 
         .story-text::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 0, 0.8);
+        }
+
+        .dialog-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+            position: relative;
+            width: 100%;
+            max-width: 95%;
+            align-self: flex-start;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .dialog-bubble.active {
+            border-color: rgba(0, 212, 255, 0.7);
+            box-shadow: 0 12px 28px rgba(0, 212, 255, 0.35);
+            transform: translateY(-3px);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .dialog-axel {
+            background: linear-gradient(135deg, rgba(247, 37, 133, 0.08), rgba(247, 37, 133, 0.15));
+            border-color: rgba(247, 37, 133, 0.25);
+            align-self: flex-end;
+        }
+
+        .dialog-orion {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 212, 255, 0.15));
+            border-color: rgba(0, 212, 255, 0.25);
+        }
+
+        .dialog-speaker {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            color: #d0f6ff;
+            text-transform: uppercase;
+            font-size: 0.95em;
+        }
+
+        .math-term {
+            color: #ffe082;
+            font-weight: 800;
+            text-decoration: underline wavy rgba(255, 224, 130, 0.7);
+            text-decoration-thickness: 2px;
         }
 
         .story-text::after {
@@ -1126,8 +1267,8 @@
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(30px);
             border-radius: 30px;
-            padding: 45px;
-            margin: 35px 0;
+            padding: clamp(30px, 3vw, 45px);
+            margin: 0;
             border: 4px solid #00ffff;
             animation: slideInRight 0.5s ease, questionNeonPulse 2s ease-in-out infinite;
             box-shadow:
@@ -1136,6 +1277,10 @@
                 inset 0 0 26px rgba(0, 255, 255, 0.18);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            width: 100%;
         }
 
         .question-card::before {
@@ -1173,6 +1318,34 @@
             background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent);
             border-radius: 50%;
             animation: questionPulse 2s ease-in-out infinite;
+        }
+
+        .explanation-box {
+            margin-top: 16px;
+            background: rgba(0, 212, 255, 0.08);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 16px;
+            padding: 14px 16px;
+            line-height: 1.6;
+            color: #e8f9ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.08);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .explanation-box strong {
+            display: inline-block;
+            margin-right: 8px;
+            color: #fff;
+        }
+
+        .explanation-box.correct {
+            border-color: rgba(0, 255, 149, 0.5);
+            background: rgba(0, 255, 149, 0.08);
+        }
+
+        .explanation-box.wrong {
+            border-color: rgba(255, 193, 7, 0.55);
+            background: rgba(255, 193, 7, 0.08);
         }
 
         @keyframes questionNeonPulse {
@@ -1232,10 +1405,10 @@
             font-family: 'Rajdhani', sans-serif;
             font-size: clamp(1.4rem, 4vw, 2rem);
             line-height: 2;
-            margin-bottom: 40px;
+            margin-bottom: 0;
             color: #ffffff;
             font-weight: 700;
-            text-shadow: 
+            text-shadow:
                 0 0 15px rgba(255, 255, 255, 0.8),
                 0 4px 20px rgba(0, 0, 0, 0.9);
             padding: 30px;
@@ -1243,11 +1416,12 @@
             border-radius: 20px;
             border-left: 6px solid #00ffff;
             border-right: 6px solid #ff00ff;
-            box-shadow: 
+            box-shadow:
                 inset 0 0 30px rgba(0, 255, 255, 0.2),
                 0 10px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         .question-text::before {
@@ -1282,6 +1456,8 @@
         .answers-grid {
             display: grid;
             gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            width: 100%;
         }
 
         .answer-btn {
@@ -1296,6 +1472,7 @@
             text-align: left;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
 
         .answer-btn::before {
@@ -1343,6 +1520,11 @@
             opacity: 0.6;
         }
 
+        .answer-btn.disabled-hint {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
         /* Seviye kartlarına da hover efekti */
         .level-card {
             background: rgba(255, 255, 255, 0.1);
@@ -1378,6 +1560,36 @@
             transform: translateY(-10px) scale(1.03);
             border-color: #667eea;
             box-shadow: 0 14px 36px rgba(102, 126, 234, 0.4);
+        }
+
+        .level-meta {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .level-badge-mini,
+        .level-complete-tick {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.45);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            font-size: 1.1rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .level-complete-tick {
+            border-color: rgba(46, 204, 113, 0.7);
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
         }
 
         .level-card:active {
@@ -1451,6 +1663,29 @@
             color: #ffd93d;
         }
 
+        .learning-summary {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 16px;
+            padding: 18px 20px;
+            text-align: left;
+            color: #e8f4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15);
+        }
+
+        .learning-summary h3 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #d6f5ff;
+        }
+
+        .learning-summary ul {
+            list-style: disc inside;
+            display: grid;
+            gap: 6px;
+            line-height: 1.5;
+        }
+
         /* Final Ekranı */
         .final-screen {
             text-align: center;
@@ -1516,6 +1751,23 @@
             margin: 20px 0;
         }
 
+        .result-badge {
+            font-size: 1.4rem;
+            margin: 10px 0 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+        }
+
+        .result-badge.hidden {
+            display: none;
+        }
+
         .result-actions {
             margin-top: 30px;
             display: flex;
@@ -1547,6 +1799,48 @@
             background: rgba(0, 0, 0, 0.78);
             backdrop-filter: blur(10px);
             animation: fadeIn 0.35s ease;
+        }
+
+        .failure-modal.soft {
+            padding: clamp(12px, 4vw, 28px);
+        }
+
+        .gentle-failure {
+            position: relative;
+            z-index: 1;
+            width: min(92vw, 520px);
+            background: linear-gradient(135deg, rgba(16, 196, 247, 0.18), rgba(255, 255, 255, 0.08));
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-radius: 24px;
+            padding: clamp(22px, 4vw, 36px);
+            text-align: center;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+        }
+
+        .gentle-icon {
+            font-size: clamp(2.6rem, 6vw, 3.4rem);
+            margin-bottom: 10px;
+        }
+
+        .gentle-title {
+            font-size: clamp(1.8rem, 4.5vw, 2.2rem);
+            margin-bottom: 10px;
+            color: #fddb92;
+        }
+
+        .gentle-text {
+            font-size: clamp(1rem, 3.2vw, 1.2rem);
+            line-height: 1.8;
+            color: #f1f5f9;
+            margin-bottom: 18px;
+        }
+
+        .gentle-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .failure-modal-content {
@@ -1838,6 +2132,10 @@
                 padding: 15px;
             }
 
+            .game-screen {
+                gap: 22px;
+            }
+
             .game-title {
                 font-size: 2rem;
             }
@@ -1868,6 +2166,39 @@
                 padding: 20px;
             }
 
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
             .result-card {
                 padding: 30px 20px;
             }
@@ -1893,6 +2224,26 @@
 
             .story-character {
                 font-size: 2rem;
+            }
+
+            .story-card {
+                max-height: 56vh;
+            }
+
+            .story-text {
+                padding: 10px 14px 28px 14px;
+                line-height: 1.75;
+                gap: 6px;
+                max-height: clamp(210px, 44vh, 280px);
+            }
+
+            .question-text {
+                padding: 18px;
+            }
+
+            .dialog-bubble {
+                padding: 10px 12px;
+                max-width: 100%;
             }
         }
     
