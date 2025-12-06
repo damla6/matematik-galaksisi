@@ -1837,6 +1837,36 @@
             background: rgba(46, 204, 113, 0.15);
         }
 
+        .level-meta {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .level-badge-mini,
+        .level-complete-tick {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.45);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            font-size: 1.1rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .level-complete-tick {
+            border-color: rgba(46, 204, 113, 0.7);
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+        }
+
         .level-card:active {
             transform: translateY(-8px) scale(1.01);
         }
@@ -2439,7 +2469,232 @@
             }
 
             .question-card, .story-card {
-                padding: 20px;
+                padding: 32px 24px;
+                max-height: clamp(280px, 52vh, 480px);
+            }
+
+            .story-text {
+                line-height: 2.1;
+                padding: 12px 24px 60px 24px;
+            }
+
+            .question-card {
+                gap: 16px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 12px 26px 50px 26px;
+                line-height: 2.1;
+                max-height: clamp(220px, 34vh, 320px);
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 12px 26px 50px 26px;
+                line-height: 2.1;
+                max-height: clamp(220px, 34vh, 320px);
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-card {
+                max-height: 52vh;
+                gap: 14px;
+            }
+
+            .story-text {
+                padding: 10px 18px 30px 18px;
+                line-height: 1.85;
+                max-height: clamp(230px, 42vh, 330px);
+                gap: 8px;
+            }
+
+            .dialog-bubble {
+                max-width: 100%;
+                padding: 10px 14px;
+            }
+
+            .dialog-speaker {
+                font-size: 0.9em;
+            }
+
+            .question-card {
+                gap: 14px;
+            }
+
+            .question-text {
+                padding: 22px;
+            }
+
+            .answers-grid {
+                grid-template-columns: 1fr;
             }
 
             .story-card {
