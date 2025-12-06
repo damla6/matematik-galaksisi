@@ -31,6 +31,10 @@
                 <input type="checkbox" id="speechToggle" checked>
                 <span class="toggle-label">Hikaye Anlatımı</span>
             </label>
+            <label class="audio-toggle">
+                <input type="checkbox" id="lowPerfToggle">
+                <span class="toggle-label">Hafif Mod</span>
+            </label>
         </div>
     </div>
 
@@ -1004,10 +1008,12 @@
                 this.score = 0;
                 this.correctAnswers = 0;
                 this.wrongAnswers = 0;
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                 this.settings = {
                     music: true,
                     effects: true,
-                    speech: true
+                    speech: true,
+                    lowPerf: prefersReducedMotion
                 };
                 this.timer = null;
                 this.timeRemaining = 0;
@@ -1023,18 +1029,34 @@
                 this.currentQuestions = []; // Seçilen sorular
                 this.questionPools = this.generateQuestionPools(); // Soru havuzları
                 this.isMobileViewport = window.matchMedia('(max-width: 480px)').matches;
-                this.starCount = this.isMobileViewport ? 50 : 100;
-                this.particleBaseCount = this.isMobileViewport ? 8 : 15;
+                this.starCount = this.computeStarCount();
+                this.particleBaseCount = this.computeParticleCount();
                 this.hintAvailable = false;
                 this.hintUsedThisQuestion = false;
                 this.activeDialogues = [];
                 this.dialogHighlightTimers = [];
                 this.metaMap = questionMeta;
                 this.conceptBlurbs = conceptBlurbs;
+                this.ambientAnimationFrame = null;
+                this.lastAmbientTick = 0;
 
                 this.initStars();
+                this.startAmbientLoop();
                 this.initMusicControl();
                 this.initAudio();
+                this.applyLowPerfMode();
+            }
+
+            computeStarCount() {
+                const base = this.isMobileViewport ? 60 : 90;
+                const narrowViewport = window.innerWidth < 600;
+                const adjusted = narrowViewport ? Math.floor(base * 0.5) : base;
+                return this.settings.lowPerf ? Math.max(8, Math.floor(adjusted * 0.3)) : adjusted;
+            }
+
+            computeParticleCount() {
+                const base = this.isMobileViewport ? 6 : 12;
+                return this.settings.lowPerf ? 0 : base;
             }
 
             generateQuestionPools() {
@@ -1185,19 +1207,62 @@
 
             initStars() {
                 const starsContainer = document.getElementById('stars');
-                for (let i = 0; i < this.starCount; i++) {
+                starsContainer.innerHTML = '';
+                const count = this.computeStarCount();
+                this.starElements = [];
+
+                for (let i = 0; i < count; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
                     star.style.left = Math.random() * 100 + '%';
                     star.style.top = Math.random() * 100 + '%';
-                    star.style.width = Math.random() * 3 + 1 + 'px';
+                    star.style.width = Math.random() * 2 + 1 + 'px';
                     star.style.height = star.style.width;
-                    star.style.animationDelay = Math.random() * 3 + 's';
+                    star.style.animationDelay = Math.random() * 2.5 + 's';
                     star.style.animationDuration = this.isMobileViewport
-                        ? 5 + Math.random() * 2 + 's'
-                        : 3 + Math.random() * 1.5 + 's';
+                        ? 4 + Math.random() * 1.5 + 's'
+                        : 2.8 + Math.random() * 1.2 + 's';
                     starsContainer.appendChild(star);
+                    this.starElements.push(star);
                 }
+            }
+
+            startAmbientLoop() {
+                this.stopAmbientLoop();
+                const loop = (timestamp) => {
+                    if (this.settings.lowPerf) {
+                        this.ambientAnimationFrame = null;
+                        return;
+                    }
+
+                    if (!this.lastAmbientTick) {
+                        this.lastAmbientTick = timestamp;
+                    }
+
+                    if (timestamp - this.lastAmbientTick > 1200) {
+                        this.subtleStarTwinkle();
+                        this.lastAmbientTick = timestamp;
+                    }
+
+                    this.ambientAnimationFrame = requestAnimationFrame(loop);
+                };
+
+                this.ambientAnimationFrame = requestAnimationFrame(loop);
+            }
+
+            stopAmbientLoop() {
+                if (this.ambientAnimationFrame) {
+                    cancelAnimationFrame(this.ambientAnimationFrame);
+                    this.ambientAnimationFrame = null;
+                }
+            }
+
+            subtleStarTwinkle() {
+                if (!this.starElements) return;
+                this.starElements.forEach((star, index) => {
+                    const twinkle = 0.65 + 0.35 * Math.sin((Date.now() / 800) + index);
+                    star.style.opacity = twinkle.toFixed(2);
+                });
             }
 
             initMusicControl() {
@@ -1206,11 +1271,13 @@
                 const musicToggle = document.getElementById('musicToggle');
                 const effectsToggle = document.getElementById('effectsToggle');
                 const speechToggle = document.getElementById('speechToggle');
+                const lowPerfToggle = document.getElementById('lowPerfToggle');
 
                 const syncToggles = () => {
                     musicToggle.checked = this.settings.music;
                     effectsToggle.checked = this.settings.effects;
                     speechToggle.checked = this.settings.speech;
+                    lowPerfToggle.checked = this.settings.lowPerf;
                     const icon = document.querySelector('.music-icon');
                     icon.textContent = this.settings.music ? '🔊' : '🔇';
                     this.updateReplayButtonState();
@@ -1259,6 +1326,12 @@
                         }
                     }
                     this.updateReplayButtonState();
+                    syncToggles();
+                });
+
+                lowPerfToggle.addEventListener('change', () => {
+                    this.settings.lowPerf = lowPerfToggle.checked;
+                    this.applyLowPerfMode();
                     syncToggles();
                 });
 
@@ -1595,9 +1668,32 @@
                 document.body.classList.toggle('ambient-paused', shouldPauseAmbient);
             }
 
+            applyLowPerfMode() {
+                document.body.classList.toggle('low-perf', this.settings.lowPerf);
+                document.getElementById('stars').classList.toggle('muted', this.settings.lowPerf);
+                this.particleBaseCount = this.computeParticleCount();
+                this.starCount = this.computeStarCount();
+
+                if (this.settings.lowPerf) {
+                    this.stopAmbientLoop();
+                    this.clearParticles();
+                } else {
+                    this.startAmbientLoop();
+                }
+
+                this.initStars();
+
+                if (!this.settings.lowPerf && document.getElementById('gameScreen').classList.contains('active')) {
+                    this.clearParticles();
+                    this.createLevelParticles((this.currentLevel || 0) + 1);
+                }
+            }
+
             showWelcome() {
                 // Temayı temizle
+                const keepLowPerf = document.body.classList.contains('low-perf');
                 document.body.className = '';
+                if (keepLowPerf) document.body.classList.add('low-perf');
                 this.stopActiveLoops();
                 this.clearParticles();
                 this.resetStars();
@@ -1616,7 +1712,9 @@
 
             showLevelSelect() {
                 // Temayı temizle
+                const keepLowPerf = document.body.classList.contains('low-perf');
                 document.body.className = '';
+                if (keepLowPerf) document.body.classList.add('low-perf');
                 this.stopActiveLoops();
                 this.clearParticles();
                 this.resetStars();
@@ -1640,6 +1738,8 @@
                     window.speechSynthesis.cancel();
                     this.currentSpeech = null;
                 }
+
+                this.stopAmbientLoop();
             }
 
             renderLevelSelect() {
@@ -1702,6 +1802,12 @@
                 const level = gameData.levels[levelIndex];
                 this.timeRemaining = level.time;
 
+                if (this.settings.lowPerf) {
+                    this.stopAmbientLoop();
+                } else {
+                    this.startAmbientLoop();
+                }
+
                 // SORU HAVUZUNDAN SEÇ
                 this.selectQuestionsFromPool(levelIndex);
 
@@ -1711,10 +1817,13 @@
                 this.showScreen('gameScreen');
                 this.updateLevelInfo();
                 
-                // Sesleri yükle
-                this.loadVoices().then(() => {
+                if (this.settings.speech) {
+                    this.loadVoices().then(() => {
+                        this.showStoryAndQuestion();
+                    });
+                } else {
                     this.showStoryAndQuestion();
-                });
+                }
                 
                 this.startTimer();
             }
@@ -1737,8 +1846,10 @@
 
             applyLevelTheme(levelIndex) {
                 // Önceki temaları temizle
+                const keepLowPerf = document.body.classList.contains('low-perf');
                 document.body.className = '';
-                
+                if (keepLowPerf) document.body.classList.add('low-perf');
+
                 // Yeni tema ekle
                 document.body.classList.add(`level-${levelIndex + 1}`);
                 
@@ -1755,7 +1866,8 @@
             }
 
             createLevelParticles(levelNum) {
-                const particleCount = this.isMobileViewport ? Math.ceil(this.particleBaseCount * 0.75) : this.particleBaseCount;
+                if (this.settings.lowPerf) return;
+                const particleCount = this.isMobileViewport ? Math.ceil(this.particleBaseCount * 0.7) : this.particleBaseCount;
                 for (let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
                     particle.className = `particle level-${levelNum}`;
@@ -1780,14 +1892,17 @@
                     6: '#e57373',  // Kırmızı - Savaş
                     7: '#4db6ac'   // Turkuaz - Gerçeklik
                 };
-                
+
                 stars.forEach((star, index) => {
                     star.style.background = colors[levelNum] || 'white';
-                    star.style.boxShadow = `0 0 10px ${colors[levelNum] || 'white'}`;
-                    
-                    // Her 10. yıldızı akan yıldız yap
-                    if (index % 10 === 0) {
+                    star.style.boxShadow = this.settings.lowPerf
+                        ? `0 0 4px ${colors[levelNum] || 'white'}`
+                        : `0 0 10px ${colors[levelNum] || 'white'}`;
+
+                    if (!this.settings.lowPerf && index % 12 === 0) {
                         star.classList.add('shooting');
+                    } else {
+                        star.classList.remove('shooting');
                     }
                 });
             }
@@ -2058,7 +2173,7 @@
                 this.narrateStory(story, () => {
                     // Seslendirme bitince soruyu göster
                     document.getElementById('questionCard').style.display = 'block';
-                    document.getElementById('questionCard').style.animation = 'slideInRight 0.5s ease';
+                    document.getElementById('questionCard').style.animation = 'slideInRight 0.28s ease';
                 });
             }
 
@@ -2077,9 +2192,12 @@
                     ? this.activeDialogues
                     : this.buildDialogues(story);
 
-                const speechText = story.text || dialogues.map(d => `${d.speaker}: ${d.text}`).join(' ');
-                const words = speechText.split(' ');
+                const paragraphs = dialogues.map(d => `${d.speaker}: ${d.text}`);
+                const speechText = story.text || paragraphs.join(' ');
                 const storyTextElement = document.getElementById('storyText');
+
+                this.dialogHighlightTimers.forEach(timer => clearTimeout(timer));
+                this.dialogHighlightTimers = [];
 
                 if (!this.settings.speech) {
                     this.currentSpeech = null;
@@ -2138,17 +2256,20 @@
                     this.currentSpeech = speech;
 
                     const wordsPerSecond = speech.rate * 2.2; // 2.5'ten 2.2'ye - daha rahat
-                    const msPerWord = 1000 / wordsPerSecond;
+                    const baseMsPerWord = 1000 / wordsPerSecond;
 
-                    // Diyalog balonlarını ses ile senkronize et
+                    // Diyalog balonlarını ses ile senkronize et (paragraf bazlı)
                     this.clearDialogHighlights();
                     const bubbles = Array.from(document.querySelectorAll('.dialog-bubble'));
-                    const counts = dialogues.map(d => Math.max(1, d.text.split(' ').filter(Boolean).length));
-                    let cumulative = 0;
+                    const durations = dialogues.map(d => {
+                        const words = Math.max(1, d.text.split(' ').filter(Boolean).length);
+                        return Math.max(1200, words * baseMsPerWord * 1.1);
+                    });
 
-                    counts.forEach((count, index) => {
-                        const startAt = cumulative * msPerWord;
-                        cumulative += count;
+                    let cumulative = 0;
+                    durations.forEach((duration, index) => {
+                        const startAt = cumulative;
+                        cumulative += duration;
                         const timer = setTimeout(() => {
                             bubbles.forEach(b => b.classList.remove('active'));
                             const target = bubbles[index];
@@ -2176,7 +2297,7 @@
                         
                         this.playSound('complete');
                         if (onComplete) {
-                            setTimeout(onComplete, 800); // 500'den 800'e - daha rahat geçiş
+                            setTimeout(onComplete, 260);
                         }
                     };
 
@@ -2500,6 +2621,10 @@
 
         // Oyunu başlat
         const game = new Game();
+
+        // Teknik Not: Yıldız ve parçacık sayıları azaltıldı, mobilde otomatik %50 düşürme eklendi,
+        // tek bir requestAnimationFrame döngüsü yıldız parlamalarını yönetiyor.
+        // Hafif Mod, kutu gölgelerini sadeleştirip ağır arka plan animasyonlarını kapatıyor.
 
         document.addEventListener('DOMContentLoaded', () => {
             const toggle = document.getElementById('introToggle');
