@@ -774,6 +774,8 @@
             7: { name: "Gerçeklik Çekirdeği", primaryColor: "#14b8a6", secondaryColor: "#041b14", icon: "🌌", backgroundClass: "theme-core" }
         };
 
+        let wordInterval = null;
+
         const questionMeta = {
             1: [
                 {
@@ -1181,7 +1183,6 @@
                 this.totalCorrect = 0;
                 this.audioContext = null;
                 this.currentSpeech = null;
-                this.wordInterval = null;
                 this.musicNodes = [];
                 this.currentQuestions = []; // Seçilen sorular
                 this.questionPools = this.generateQuestionPools(); // Soru havuzları
@@ -1966,10 +1967,7 @@
                     this.timer = null;
                 }
 
-                if (this.wordInterval) {
-                    clearInterval(this.wordInterval);
-                    this.wordInterval = null;
-                }
+                this.clearWordInterval();
 
                 if (this.currentSpeech) {
                     window.speechSynthesis.cancel();
@@ -2433,6 +2431,61 @@
                 bubbles.forEach(b => b.classList.remove('active'));
                 this.dialogHighlightTimers.forEach(timer => clearTimeout(timer));
                 this.dialogHighlightTimers = [];
+                this.clearWordInterval();
+            }
+
+            clearWordInterval() {
+                if (wordInterval) {
+                    clearInterval(wordInterval);
+                    wordInterval = null;
+                }
+            }
+
+            startDialogueHighlightCycle(durations = []) {
+                this.clearWordInterval();
+
+                const bubbles = Array.from(document.querySelectorAll('.dialog-bubble'));
+                bubbles.forEach(b => b.classList.remove('active'));
+
+                if (!durations.length || !bubbles.length) return;
+
+                const totalDuration = durations.reduce((sum, value) => sum + value, 0);
+                const startedAt = performance.now();
+                let lastIndex = -1;
+
+                wordInterval = setInterval(() => {
+                    const elapsed = performance.now() - startedAt;
+                    if (elapsed >= totalDuration + 200) {
+                        this.clearDialogHighlights();
+                        return;
+                    }
+
+                    let cumulative = 0;
+                    let activeIndex = -1;
+
+                    for (let i = 0; i < durations.length; i++) {
+                        cumulative += durations[i];
+                        if (elapsed < cumulative) {
+                            activeIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (activeIndex === -1) {
+                        this.clearDialogHighlights();
+                        return;
+                    }
+
+                    if (activeIndex !== lastIndex) {
+                        bubbles.forEach(b => b.classList.remove('active'));
+                        const target = bubbles[activeIndex];
+                        if (target) {
+                            target.classList.add('active');
+                            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                        lastIndex = activeIndex;
+                    }
+                }, 180);
             }
 
             updateReplayButtonState() {
@@ -2444,6 +2497,7 @@
             }
 
             showStoryAndQuestion() {
+                this.clearWordInterval();
                 const level = gameData.levels[this.currentLevel];
                 const story = level.stories[this.currentQuestion];
                 this.currentStory = story;
@@ -2541,10 +2595,7 @@
                     window.speechSynthesis.cancel();
                 }
 
-                if (this.wordInterval) {
-                    clearInterval(this.wordInterval);
-                    this.wordInterval = null;
-                }
+                this.clearWordInterval();
 
                 const dialogues = this.activeDialogues && this.activeDialogues.length > 0
                     ? this.activeDialogues
@@ -2556,6 +2607,7 @@
 
                 this.dialogHighlightTimers.forEach(timer => clearTimeout(timer));
                 this.dialogHighlightTimers = [];
+                this.clearWordInterval();
 
                 if (!this.settings.speech) {
                     this.currentSpeech = null;
@@ -2623,24 +2675,12 @@
                         return Math.max(1200, words * baseMsPerWord * 1.1);
                     });
 
-                    let cumulative = 0;
-                    durations.forEach((duration, index) => {
-                        const startAt = cumulative;
-                        cumulative += duration;
-                        const timer = setTimeout(() => {
-                            bubbles.forEach(b => b.classList.remove('active'));
-                            const target = bubbles[index];
-                            if (target) {
-                                target.classList.add('active');
-                                target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                            }
-                        }, startAt);
-                        this.dialogHighlightTimers.push(timer);
-                    });
+                    this.startDialogueHighlightCycle(durations);
 
                     // Seslendirme bitince
                     speech.onend = () => {
                         this.clearDialogHighlights();
+                        this.clearWordInterval();
 
                         this.currentSpeech = null;
                         this.updateReplayButtonState();
@@ -2662,6 +2702,7 @@
                     speech.onerror = (event) => {
                         console.error('Seslendirme hatası:', event);
                         this.clearDialogHighlights();
+                        this.clearWordInterval();
                         if (storyTextElement) {
                             storyTextElement.innerHTML = this.highlightMathTerms(speechText);
                         }
@@ -2694,6 +2735,7 @@
 
             replayStory() {
                 if (!this.settings.speech || !this.currentStory) return;
+                this.clearWordInterval();
                 this.narrateStory(this.currentStory, () => {
                     document.getElementById('questionCard').style.display = 'block';
                 });
@@ -2873,6 +2915,7 @@
             }
 
             nextQuestion() {
+                this.clearWordInterval();
                 if (this.currentQuestion < this.currentQuestions.length - 1) {
                     this.currentQuestion++;
                     this.showStoryAndQuestion();
@@ -2921,6 +2964,8 @@
 
             completeLevel() {
                 clearInterval(this.timer);
+                this.clearWordInterval();
+                this.clearDialogHighlights();
 
                 const level = gameData.levels[this.currentLevel];
                 const timeBonus = Math.max(0, Math.floor(this.timeRemaining / 10));
@@ -2958,21 +3003,6 @@
                 if (wrongAnswersEl) wrongAnswersEl.textContent = this.wrongAnswers;
                 const timeBonusEl = document.getElementById('timeBonus');
                 if (timeBonusEl) timeBonusEl.textContent = '+' + timeBonus;
-
-                const resultBadge = document.getElementById('resultBadge');
-                if (badge) {
-                    resultBadge.textContent = `${this.getBadgeIcon(badge)} ${badge}`;
-                    resultBadge.classList.remove('hidden');
-                } else {
-                    resultBadge.textContent = '';
-                    resultBadge.classList.add('hidden');
-                }
-
-                const summaryItems = this.buildLearningSummary();
-                this.renderLearningSummary(summaryItems);
-
-                const bloomText = this.buildBloomSummaryText();
-                this.renderBloomSummary(bloomText);
 
                 const resultBadge = document.getElementById('resultBadge');
                 if (badge) {
